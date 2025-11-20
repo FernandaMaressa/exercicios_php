@@ -9,29 +9,50 @@ body {
 }
 
 .container {
-    background: white;
+    background: rgb(238, 196, 248);
     padding: 30px;
-    border-radius: 10px;
-    width: 350px;
+    border-radius: 12px;
+    width: 400px;
+    margin: 80px auto;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     text-align: center;
 }
 
-input, button {
+.container h2{
+    margin-bottom: 20px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+}
+
+.form-group input {
     width: 100%;
     padding: 10px;
-    margin-top: 10px;
+    border-radius: 7px;
+    border: 1px solid #d07ff3;
+    box-sizing: border-box;
 }
 
 button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
     border: none;
-    background: #ebc2fc;
+    background: #d07ff3;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 7px;
+    transition: transform 0.3s ease;
 }
 
 button:hover {
-    background: #ebc2fc;
-;
+    background: #d07ff3;
+    transform: scale(1.02);
 }
