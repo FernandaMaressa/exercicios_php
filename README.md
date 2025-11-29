@@ -14,9 +14,9 @@ git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
 ```
 
-#### 2. Mude para a branch nvt146-frontend
+#### 2. Mude para a branch exerciciofrontend
 ```bash
-git checkout nvt146-frontend
+git checkout exerciciofrontend
 ```
 
 #### 3. Suba o container Docker com PHP e Apache
