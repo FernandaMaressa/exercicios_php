@@ -53,6 +53,6 @@ button {
 }
 
 button:hover {
-    background: #d07ff3;
+    background: #d886fc;
     transform: scale(1.02);
 }
