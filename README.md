@@ -1,94 +1,57 @@
+📘 README – Como Rodar
+✅ Pré-requisitos
 
-## 🚀 Como Rodar o Projeto Localmente
+Antes de rodar o projeto, instale:
 
-### Pré-requisitos
-- Docker instalado e rodando
-- Git instalado
-- Porta **8080** disponível
+Git
 
-### Instruções Passo a Passo
+Docker
 
-#### 1. Clone o repositório
-```bash
+Docker Compose
+
+Porta 8080 livre
+
+🚀 Como Rodar o Exercício 
+1. Clone o repositório e entre na pasta
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
-```
 
-#### 2. Mude para a branch exerciciofrontend
-```bash
-git checkout exerciciofrontend
-```
+2. Execute o Docker Compose
 
-#### 3. Suba o container Docker com PHP e Apache
+O arquivo docker-compose.yml já deve estar na branch main.
 
-**Para Linux/Mac:**
-```bash
-docker run -d -p 8080:80 -v $(pwd)/exercicio1:/var/www/html --name exercicio1-container php:8.2-apache
-```
+docker-compose up -d
 
-**Para Windows (PowerShell):**
-```bash
-docker run -d -p 8080:80 -v ${PWD}/exercicio1:/var/www/html --name exercicio1-container php:8.2-apache
-```
+3. Acesse o projeto no navegador
 
-**Para Windows (CMD):**
-```bash
-docker run -d -p 8080:80 -v %cd%/exercicio1:/var/www/html --name exercicio1-container php:8.2-apache
-```
+Abra:
 
-#### 4. Acesse no navegador
-```
 http://localhost:8080
-```
+
 
 Ou:
-```
+
 http://localhost:8080/index.html
-```
 
----
 
-## 🛑 Como Parar o Container
+🛑 Parando o Servidor
+Parar os containers
+docker-compose stop
 
-#### Parar o container
-```bash
-docker stop exercicio1-container
-```
+Derrubar tudo
+docker-compose down
 
-#### Remover o container (se necessário)
-```bash
-docker rm exercicio1-container
-```
+📦 docker-compose.yml usado no projeto
 
-#### Ver containers rodando
-```bash
-docker ps
-```
+Coloque esse arquivo na raiz do repositório:
 
-#### Ver todos os containers (incluindo parados)
-```bash
-docker ps -a
-```
+version: "3.8"
 
----
-
-## 🔄 Próximos Passos (Backend)
-
-Esta branch contém apenas o frontend. O backend será desenvolvido na branch **nvt153-backend** e incluirá:
-
-- **processar.php**: Arquivo PHP que receberá os dados do formulário
-- Lógica de validação da idade (if/else)
-- Exibição da mensagem personalizada
-- Botão para voltar ao formulário
-
-## 🧪 Testando o Frontend
-
-Ao acessar `http://localhost:8080`, você deve ver:
-
-1. Um formulário centralizado com fundo rosa/roxo
-2. Título "VERIFICAR IDADE"
-3. Campo "Nome" (texto)
-4. Campo "Idade" (número)
-5. Botão "Enviar" com efeito hover
-
-**Observação**: Como o backend ainda não foi implementado, ao clicar em "Enviar" nada acontecerá. Isso é esperado nesta branch.
+services:
+  php-apache:
+    image: php:8.2-apache
+    container_name: exercicio1-container
+    ports:
+      - "8080:80"
+    volumes:
+      - ./exercicio1:/var/www/html
