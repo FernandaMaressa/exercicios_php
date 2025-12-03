@@ -1,48 +1,44 @@
-##Como Rodar o Exercício##
-Este projeto utiliza PHP 8.2, Apache e Docker Compose para executar o front-end do Exercício 1.
+**Como Rodar o Exercício**
+_Este projeto utiliza PHP 8.2, Apache e Docker Compose para executar o front-end do Exercício 1._
 
 **Pré-requisitos**
-
-Antes de rodar o projeto, instale:
+_Antes de rodar o projeto, instale:_
 Git
 Docker
 Docker Compose
-👉 No Linux e Mac, o comando é docker compose (com espaço)
-👉 No Windows também funciona docker compose
+👉 No **Linux e Mac**, o comando é docker compose (com espaço)
+👉 No **Windows** também funciona docker compose
 Porta 8080 livre
 
-🚀 Como Rodar o Projeto
-1️⃣ Clone o repositório
+**Como Rodar o Projeto**
+1️⃣ _Clone o repositório_
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
 
-2️⃣ Suba os serviços com Docker Compose
-🔹 Linux / MacOS
-Use:
+2️⃣ _Suba os serviços com Docker Compose_
+**Linux / MacOS**
+_Use:_
 docker compose up -d
 
-🔹 Windows (PowerShell ou CMD)
-Também use:
+**Windows (PowerShell ou CMD)**
+_Também use:_
 docker compose up -d
 
-3️⃣ Acesse no navegador
-
-Abra:
+3️⃣ _Acesse no navegador_
+_Abra:_
 http://localhost:8080
 
-
-ou
+_ou_
 http://localhost:8080/index.html
 
-
-🛑 Parando o Ambiente
-Parar containers sem remover:
+**Parando o Ambiente**
+_Parar containers sem remover:_
 docker compose stop
 
-Parar e remover tudo:
+_Parar e remover tudo:_
 docker compose down
 
-📦 Arquivo docker-compose.yml
+_Arquivo docker-compose.yml_
 Este arquivo deve estar na raiz do repositório (branch main):
 
 version: "3.8"
