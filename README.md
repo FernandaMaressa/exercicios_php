@@ -49,7 +49,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./exercicio1:/var/www/html
+      - ./:/var/www/html
 
 🔍 Verificando se o ambiente subiu
 
