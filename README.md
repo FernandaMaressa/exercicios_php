@@ -28,9 +28,6 @@ docker compose up -d
 _Abra:_
 http://localhost:8080
 
-_ou_
-http://localhost:8080/index.html
-
 **Parando o Ambiente**
 _Parar containers sem remover:_
 docker compose stop
