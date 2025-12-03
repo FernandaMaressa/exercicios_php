@@ -1,7 +1,7 @@
-📘 Como Rodar o Exercício 
+##Como Rodar o Exercício##
 Este projeto utiliza PHP 8.2, Apache e Docker Compose para executar o front-end do Exercício 1.
 
-✅ Pré-requisitos
+**Pré-requisitos**
 
 Antes de rodar o projeto, instale:
 Git
