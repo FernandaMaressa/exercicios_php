@@ -7,25 +7,25 @@
 </head>
 <body>
 
-    <div class="container">
+<div class="container">
     <h2>Verificar Idade</h2>
 
-    <form>
+    <form action="processar.php" method="POST">
 
         <div class="form-group">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
+            <label>Nome:</label>
+            <input type="text" name="nome" required>
         </div>
 
         <div class="form-group">
-            <label for="idade">Idade:</label>
-            <input type="number" id="idade" name="idade" required>
+            <label>Idade:</label>
+            <input type="number" name="idade" required>
         </div>
 
         <button type="submit">Enviar</button>
+
     </form>
 </div>
-
 
 </body>
 </html>
