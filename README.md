@@ -11,7 +11,7 @@ Docker Compose
 👉 No **Windows** também funciona docker compose
 Porta 8080 livre
 
-### **Como Rodar o Projeto**
+## **Como Rodar o Projeto**
 1️⃣ _Clone o repositório_
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
@@ -29,7 +29,7 @@ docker compose up -d
 _Abra:_
 http://localhost:8080
 
-**Parando o Ambiente**
+## **Parando o Ambiente**
 _Parar containers sem remover:_
 docker compose stop
 
@@ -49,7 +49,7 @@ services:
     volumes:
       - ./:/var/www/html
 
-🔍 Verificando se o ambiente subiu
+## Verificando se o ambiente subiu
 
 Execute:
 docker ps
