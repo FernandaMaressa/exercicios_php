@@ -1,8 +1,8 @@
-#**Como Rodar o Exercício**
+# **Como Rodar o Exercício**
 _Este projeto utiliza PHP 8.2, Apache e Docker Compose para executar o front-end do Exercício 1._
 
 ---
-**Pré-requisitos**
+## **Pré-requisitos**
 _Antes de rodar o projeto, instale:_
 Git
 Docker
@@ -11,7 +11,7 @@ Docker Compose
 👉 No **Windows** também funciona docker compose
 Porta 8080 livre
 
-**Como Rodar o Projeto**
+### **Como Rodar o Projeto**
 1️⃣ _Clone o repositório_
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
