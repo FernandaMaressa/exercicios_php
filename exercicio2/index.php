@@ -11,7 +11,7 @@
 
     <form action="processar.php" method="POST">
         <div class="form-group">
-            <label for="numero">Número:</label>
+            <label for="numero">Digite um número:</label>
             <input type="number" id="numero" name="numero" required>
         </div>
 
