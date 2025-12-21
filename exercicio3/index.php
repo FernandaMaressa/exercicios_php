@@ -8,7 +8,7 @@
 <body>
 
 <div class="container">
-    <h2>Simulador de Empréstimo Bancário</h2>
+    <h1>Simulador de Empréstimo Bancário</h2>
 
     <form action="processar.php" method="POST">
         <label>Nome do Cliente</label>
