@@ -8,6 +8,8 @@
 body {
     background-color: #f4f6f8;
     color: #222;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
@@ -20,6 +22,20 @@ h1 {
     margin-bottom: 30px;
     color: #0a2a66;
     letter-spacing: 1px; 
+}
+
+.resultado {
+    background: #ffffff;
+    padding: 40px;
+    width: 400px;
+    text-align: center;
+    border-left: 6px solid #1f3c88;
+    border-right: 6px solid #1f3c88;
+}
+
+.resultado h2{
+    margin-bottom: 20px;
+    color: #1f3c88;
 }
 
 form {
