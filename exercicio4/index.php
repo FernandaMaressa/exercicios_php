@@ -8,7 +8,7 @@
 <body>
 
 <div class="container">
-    <h1>🏁 Classificação da Corrida 🏁</h1>
+    <h1>Classificação da Corrida 🏁</h1>
 
     <form action="processar.php" method="post">
         <div class="atleta">

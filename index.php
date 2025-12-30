@@ -11,6 +11,7 @@
         <li><a href="exercicio1/">Exercício 1 - Verificação de Idade</a></li>
         <li><a href="exercicio2/">Exercício 2 - Verificação de Múltiplos de 4, 6 e 9</a></li>
         <li><a href="exercicio3/">Exercício 3 - Simulador do Empréstimo Bancário</a></li>    
+        <li><a href="exercicio4/">Exercício 4 - Ranking de Competição</a></li>
     </ul>
 
 </body>
