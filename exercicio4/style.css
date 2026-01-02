@@ -7,7 +7,12 @@
 
 body {
     min-height: 100vh;
+
+    /* NOVA PROPRIEDADE 1:
+       linear-gradient cria um fundo em degradê,
+       diferente dos fundos sólidos usados nos exercícios anteriores */
     background: linear-gradient(135deg, #000000, #1a1a1a);
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,6 +24,10 @@ body {
     padding: 40px;
     width: 420px;
     border-radius: 10px;
+
+    /* NOVA PROPRIEDADE 2:
+       box-shadow cria um efeito de sombra/brilho,
+       trazendo destaque visual no estilo Fórmula 1 */
     box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
 }
 
@@ -57,9 +66,14 @@ button {
     border: none;
     font-size: 18px;
     cursor: pointer;
+
+    /* NOVA PROPRIEDADE 3:
+       transition adiciona uma animação suave
+       ao mudar a cor do botão no hover */
     transition: 0.3s;
 }
 
 button:hover {
     background-color: #c41400;
 }
+
