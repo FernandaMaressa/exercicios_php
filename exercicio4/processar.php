@@ -8,7 +8,6 @@ $t3 = floatval($_POST['tempo3'] ?? 0);
 
 if ($t1 <= 0 || $t2 <= 0 || $t3 <= 0) {
     die("Erro: Todos os atletas devem ter um tempo maior que zero. <a href='index.php'>Voltar</a>");
-}
 
 if ($t1 < $t2 && $t1 < $t3) {
     $primNome = $n1; $primTempo = $t1;
