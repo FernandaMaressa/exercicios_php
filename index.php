@@ -12,6 +12,7 @@
         <li><a href="exercicio2/">Exercício 2 - Verificação de Múltiplos de 4, 6 e 9</a></li>
         <li><a href="exercicio3/">Exercício 3 - Simulador do Empréstimo Bancário</a></li>    
         <li><a href="exercicio4/">Exercício 4 - Ranking de Competição</a></li>
+        <li><a href="exercicio5/">Exercício 5 - Avaliação de Desempenho Escolar </a></li>
     </ul>
 
 </body>

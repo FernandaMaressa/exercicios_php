@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background-color: #eef2f3;
+    background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+    background-size: 20px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 2px;
+    position: relative;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+    border-left: 30px solid #f0f0f0;
+}
+
+/* 1. Efeito de linha vermelha de margem de caderno escolar */
+.container::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #ffadad;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1a5276;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px dashed #1a5276;
+    padding-bottom: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+}
+
+/* 2. Inputs com estilo "underline" para parecer preenchimento de lacunas em provas */
+input {
+    padding: 12px 5px;
+    border: none;
+    border-bottom: 2px solid #bdc3c7;
+    background-color: transparent;
+    transition: border-color 0.3s;
+    outline: none;
+    font-size: 16px;
+}
+
+input:focus {
+    border-bottom-color: #3498db;
+}
+
+/* Botão com estilo de "adesivo" ou etiqueta escolar */
+button {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 4px 0 #2980b9;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.resultado {
+    margin-top: 35px;
+    padding: 25px;
+    text-align: center;
+    border-radius: 0;
+    font-weight: bold;
+    /* 3. Efeito de leve rotação para parecer um post-it colado manualmente */
+    transform: rotate(-1deg);
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+}
+
+.excelente { background-color: #b2ffad; color: #1b5e20; border: 1px solid #81c784; }
+.otimo { background-color: #e2f3bc; color: #33691e; border: 1px solid #c5e1a5; }
+.bom { background-color: #fff9c4; color: #827717; border: 1px solid #fff176; }
+.regular { background-color: #ffe0b2; color: #e65100; border: 1px solid #ffcc80; }
+.insuficiente { background-color: #ffadad; color: #b71c1c; border: 1px solid #e57373; }
+
+
