@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #000080; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: #FFA500;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+label {
+    font-weight: 600;
+    color: #555;
+    font-size: 14px;
+    margin-bottom: -10px;
+}
+
+input,
+select {
+    padding: 12px 15px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+/* Botões */
+button {
+    margin-top: 10px;
+    padding: 14px;
+    background: #000080;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 128, 0.6);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+a {
+    text-decoration: none;
+    display: block;
+    margin-top: 20px;
+}
+
+a button {
+    background: #000080;
+    margin-top: 0;
+}
+
+a button:hover {
+    background: #000080;
+    box-shadow: 0 8px 20px rgba(0, 0, 128, 0.6);
+}
+
+/* Resultado */
+.resultado {
+    margin-top: 20px;
+    padding: 25px;
+    border-radius: 10px;
+    line-height: 1.8;
+}
+
+.resultado p {
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+.resultado hr {
+    margin: 15px 0;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.valor-final {
+    font-size: 18px !important;
+    margin-top: 15px !important;
+    padding-top: 15px;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Cores por categoria de cupom */
+.bronze {
+    background: #cd7f32;
+    color: #fff;
+}
+
+.prata {
+    background: #c0c0c0;
+    color: #000;
+}
+
+.ouro {
+    background: #FFD700; 
+    color: #000;
+}
+
+.platina {
+    background: #00CED1;
+    color: #fff;
+}
+
+.diamante {
+    background: #DDA0DD;
+    color: #4a148c;
+}
+
+.invalido {
+    background: #FF6347;
+    color: #fff;
+}
+
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .container {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    button {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
