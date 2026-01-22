@@ -1,0 +1,23 @@
+{
+  "name": "exercicios_php",
+  "version": "1.0.0",
+  "description": "_Este projeto utiliza PHP 8.2, Apache e Docker Compose para executar o front-end do Exercício 1._",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FernandaMaressa/exercicios_php.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FernandaMaressa/exercicios_php/issues"
+  },
+  "homepage": "https://github.com/FernandaMaressa/exercicios_php#readme",
+  "devDependencies": {
+    "cypress": "^15.9.0"
+  }
+}
