@@ -4,92 +4,111 @@ Este projeto contém exercícios de PHP utilizando Apache e Docker Compose.
 
 ---
 
-## *Pré-requisitos*
+## Pré-requisitos
 
-Antes de rodar o projeto, instale:
+Para rodar o projeto, você precisa ter instalado:
 
-- *Git* - [Download Git](https://git-scm.com/downloads)
-- *Docker* - [Download Docker](https://www.docker.com/get-started)
-- *Docker Compose* (já incluído no Docker Desktop)
-- *Node.js* (versão 18 ou superior) - [Download Node.js](https://nodejs.org/)
-- *npm* (instalado automaticamente com Node.js)
+- **Docker** - [Download Docker](https://www.docker.com/get-started)
+- **Docker Compose** (já incluído no Docker Desktop)
+- **Node.js** (versão 18 ou superior) - [Download Node.js](https://nodejs.org/)
+- **npm** (instalado automaticamente com Node.js)
 
-### *Verificar instalações:*
-bash
-git --version
+### Verificar instalações
+```bash
 docker --version
 docker compose version
 node --version
 npm --version
+```
 
+### Requisitos de Sistema
 
-### *Requisitos de Porta:*
-- Porta *8080* livre (Apache)
+- Porta **8080** disponível (para o Apache)
+- Sistema operacional: Windows, Linux ou MacOS
 
 ---
 
-## *📦 Instalação*
+## Obtendo o Projeto
 
-### *1️⃣ Clone o repositório*
-bash
+Você pode obter o projeto de duas formas:
+
+### Opção 1: Baixar como ZIP (sem Git)
+
+1. Acesse: [https://github.com/FernandaMaressa/exercicios_php](https://github.com/FernandaMaressa/exercicios_php)
+2. Clique no botão verde **"Code"**
+3. Selecione **"Download ZIP"**
+4. Extraia o arquivo ZIP
+5. Abra o terminal na pasta extraída
+
+### Opção 2: Clonar com Git (recomendado)
+
+Se você tiver o Git instalado:
+```bash
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
+```
 
+**Download Git (opcional):** [https://git-scm.com/downloads](https://git-scm.com/downloads)
 
 ---
 
-## *🐳 Rodando o Ambiente PHP com Docker*
+## Rodando o Ambiente PHP com Docker
 
-### *2️⃣ Suba os serviços com Docker Compose*
+### Passo 1: Suba os serviços com Docker Compose
 
-*Linux / MacOS / Windows:*
-bash
+No terminal, dentro da pasta do projeto:
+```bash
 docker compose up -d
+```
 
-
-### *3️⃣ Acesse no navegador*
+### Passo 2: Acesse no navegador
 
 Abra: [http://localhost:8080](http://localhost:8080)
 
-### *✅ Verificando se o ambiente subiu*
+### Verificando se o ambiente subiu
 
 Execute:
-bash
+```bash
 docker ps
-
+```
 
 Deve aparecer algo como:
-
+```
 CONTAINER ID   IMAGE              COMMAND                  STATUS
 abc123def456   php:8.2-apache     "docker-php-entryp..."   Up 2 minutes
+```
 
-
-Se aparecer, o projeto está rodando com sucesso! ✅
+Se aparecer, o projeto está rodando com sucesso.
 
 ---
 
-## *🧪 Configurando Testes com Cypress*
+## Configurando Testes com Cypress
 
-### *4️⃣ Instale as dependências do Node.js*
+### Passo 3: Instale as dependências do Node.js
 
-Na raiz do projeto (exercicios_php), execute:
-bash
+Na raiz do projeto (`exercicios_php`), execute:
+```bash
 npm install
+```
 
+**Importante:** A pasta `node_modules/` não é versionada no Git. Este comando criará ela localmente com todas as dependências necessárias.
 
-Isso instalará o Cypress e todas as dependências listadas no package.json.
+### Passo 4: Abra o Cypress
 
-### *5️⃣ Abra o Cypress*
-
-*Modo interativo (recomendado para desenvolvimento):*
-bash
+**Modo interativo (recomendado para desenvolvimento):**
+```bash
 npx cypress open
+```
 
+**Modo headless (rodar todos os testes):**
+```bash
+npx cypress run
+```
 
-### *6️⃣ Estrutura de Testes*
+### Estrutura de Testes
 
 Os testes estão organizados em:
-
+```
 cypress/
 ├── e2e/
 │   ├── exercicio1.cy.js
@@ -101,13 +120,14 @@ cypress/
 ├── fixtures/
 ├── support/
 └── cypress.config.js
+```
 
 ---
 
-## *🛠️ Comandos Úteis*
+## Comandos Úteis
 
-### *Docker:*
-bash
+### Docker
+```bash
 # Parar containers sem remover
 docker compose stop
 
@@ -119,13 +139,10 @@ docker compose logs -f
 
 # Reiniciar o ambiente
 docker compose restart
+```
 
-
-### *Cypress:*
-bash
-# Instalar Cypress
-npm install cypress --save-dev
-
+### Cypress
+```bash
 # Abrir interface do Cypress
 npx cypress open
 
@@ -140,10 +157,10 @@ npx cypress run --browser chrome
 
 # Rodar testes no Firefox
 npx cypress run --browser firefox
+```
 
-
-### *Node.js:*
-bash
+### Node.js
+```bash
 # Instalar dependências
 npm install
 
@@ -155,16 +172,43 @@ node --version
 
 # Ver versão do npm
 npm --version
-
+```
 
 ---
 
-## *⚙️ Configuração do Ambiente*
+## Estrutura do Projeto
+```
+exercicios_php/
+├── exercicio1/
+│   ├── front/
+│   └── back/
+├── exercicio2/
+├── exercicio3/
+├── exercicio4/
+├── exercicio5/
+├── exercicio6/
+│   ├── index.php
+│   ├── processar.php
+│   └── style.css
+├── cypress/
+│   ├── e2e/
+│   │   └── exercicio6.cy.js
+│   └── support/
+├── docker-compose.yml
+├── package.json
+├── cypress.config.js
+├── .gitignore
+└── README.md
+```
 
-### *Arquivo docker-compose.yml*
+---
 
-Este arquivo deve estar na raiz do repositório:
-yaml
+## Configuração do Ambiente
+
+### Arquivo `docker-compose.yml`
+
+Este arquivo está na raiz do repositório:
+```yaml
 version: "3.8"
 
 services:
@@ -174,10 +218,10 @@ services:
       - "8080:80"
     volumes:
       - ./:/var/www/html
+```
 
-
-### *Arquivo package.json*
-json
+### Arquivo `package.json`
+```json
 {
   "name": "exercicios-php",
   "version": "1.0.0",
@@ -192,10 +236,10 @@ json
     "cypress": "^13.6.0"
   }
 }
+```
 
-
-### *Arquivo cypress.config.js*
-javascript
+### Arquivo `cypress.config.js`
+```javascript
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
@@ -206,15 +250,38 @@ module.exports = defineConfig({
     screenshotOnRunFailure: true
   }
 })
-
+```
 
 ---
 
-## *🚀 Workflow Completo*
+## Importante: Arquivo .gitignore
 
-### *Para desenvolver:*
-bash
-# 1. Clone o repositório
+A pasta `node_modules/` **não é versionada** no Git.
+
+Após baixar o projeto, você **deve** instalar as dependências:
+```bash
+npm install
+```
+
+Isso criará a pasta `node_modules/` localmente com todas as dependências necessárias.
+
+### Conteúdo do .gitignore
+
+O projeto possui um `.gitignore` que ignora:
+
+- `node_modules/` - Dependências do Node.js (devem ser instaladas com `npm install`)
+- `cypress/videos/` - Vídeos dos testes
+- `cypress/screenshots/` - Screenshots de falhas
+- Arquivos temporários do sistema operacional
+
+---
+
+## Workflow Completo
+
+### Para desenvolver
+```bash
+# 1. Baixe o projeto (ZIP ou Git clone)
+# Se usar Git:
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
 
@@ -229,10 +296,10 @@ npx cypress open
 
 # 5. Acesse no navegador para testar manualmente
 # http://localhost:8080
+```
 
-
-### *Para rodar testes automatizados:*
-bash
+### Para rodar testes automatizados
+```bash
 # Certifique-se que o Docker está rodando
 docker compose up -d
 
@@ -241,13 +308,59 @@ npm test
 
 # Ou rode apenas o Exercício 6
 npm run test:e6
+```
 
 ---
 
-## *📚 Recursos Adicionais*
+## Troubleshooting
 
-- *Documentação PHP:* [https://www.php.net/](https://www.php.net/)
-- *Documentação Docker:* [https://docs.docker.com/](https://docs.docker.com/)
-- *Documentação Cypress:* [https://docs.cypress.io/](https://docs.cypress.io/)
-- *Node.js:* [https://nodejs.org/](https://nodejs.org/)
+### Problema: Porta 8080 já está em uso
+```bash
+# Linux/Mac:
+lsof -i :8080
+
+# Windows:
+netstat -ano | findstr :8080
+
+# Solução: Mate o processo ou altere a porta no docker-compose.yml
+```
+
+### Problema: Docker não inicia
+```bash
+# Verifique se o Docker está rodando
+docker info
+
+# Reinicie o Docker Desktop
+```
+
+### Problema: Cypress não encontra baseUrl
+```bash
+# Certifique-se que o Docker está rodando
+docker compose ps
+
+# Verifique se consegue acessar
+curl http://localhost:8080
+```
+
+### Problema: npm install falha
+```bash
+# Limpe o cache do npm
+npm cache clean --force
+
+# Delete node_modules e package-lock.json
+rm -rf node_modules package-lock.json
+
+# Reinstale
+npm install
+```
+
+---
+
+## Recursos Adicionais
+
+- **Documentação PHP:** [https://www.php.net/](https://www.php.net/)
+- **Documentação Docker:** [https://docs.docker.com/](https://docs.docker.com/)
+- **Documentação Cypress:** [https://docs.cypress.io/](https://docs.cypress.io/)
+- **Node.js:** [https://nodejs.org/](https://nodejs.org/)
+
 
