@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+form {
+    max-width: 400px;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    margin: auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+    color: #555;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    border-color: #0077cc;
+    outline: none;
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background: #0077cc;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #005fa3;
+}
+
+.comprovante {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 450px;
+    margin: 40px auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    border-left: 5px solid #28a745;
+}
+
+.comprovante h2 {
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.comprovante p {
+    margin: 12px 0;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.comprovante a {
+    text-decoration: none;
+    display: block;
+    margin-top: 25px;
+}
+
+.comprovante button {
+    background: #28a745;
+}
+
+.comprovante button:hover {
+    background: #218838;
+}
