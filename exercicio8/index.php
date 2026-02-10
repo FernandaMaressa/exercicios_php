@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>🚀 Contador Regressivo</h1>
+    <h1>Contador Regressivo</h1>
     
     <form action="processar.php" method="POST">
         <label for="numero">Número Inicial da Contagem:</label>
@@ -19,3 +19,4 @@
 </div>
 </body>
 </html>
+
