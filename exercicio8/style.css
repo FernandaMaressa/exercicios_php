@@ -101,7 +101,7 @@ button:active {
 }
 
 .countdown-body {
-    background: linear-gradient(135deg, #d63384 0%, #ff69b4 50%, #ff85c0 100%);
+    background: linear-gradient(135deg, #c2185b 0%, #d63384 50%, #e91e63 100%);
     overflow: hidden;
     position: relative;
 }
@@ -114,9 +114,9 @@ button:active {
     top: -50%;
     left: -50%;
     background-image: 
-        radial-gradient(circle, rgba(255, 255, 255, 0.2) 2px, transparent 2px),
-        radial-gradient(circle, rgba(255, 255, 255, 0.15) 3px, transparent 3px),
-        radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        radial-gradient(circle, rgba(255, 255, 255, 0.3) 2px, transparent 2px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.25) 3px, transparent 3px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
     background-size: 200px 200px, 300px 300px, 250px 250px;
     animation: float 8s infinite linear;
 }
@@ -139,15 +139,33 @@ button:active {
     z-index: 10;
 }
 
-.numero,
-.fim,
+.numero {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fim {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    display: none;
+}
+
 .btn-voltar {
     opacity: 0;
     visibility: hidden;
 }
 
-.numero.show,
-.fim.show,
+.numero.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fim.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
 .btn-voltar.show {
     opacity: 1;
     visibility: visible;
