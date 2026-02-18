@@ -1,0 +1,313 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --vermelho-principal: #c41e3a;
+    --vermelho-escuro: #8b0000;
+    --vermelho-claro: #dc143c;
+    --bege: #f5f5dc;
+    --bege-escuro: #d4c4a8;
+    --branco: #ffffff;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--vermelho-principal) 0%, var(--vermelho-escuro) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: var(--bege);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    max-width: 700px;
+    width: 100%;
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid var(--vermelho-principal);
+}
+
+h1 {
+    font-size: 36px;
+    color: var(--vermelho-escuro);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    /* NOVA FUNCIONALIDADE 1: text-stroke para contorno de texto */
+    -webkit-text-stroke: 1px var(--vermelho-principal);
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #666;
+    font-style: italic;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--vermelho-escuro);
+}
+
+textarea {
+    padding: 15px;
+    font-size: 16px;
+    border: 3px solid var(--vermelho-principal);
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: var(--branco);
+    color: #333;
+    resize: vertical;
+    font-family: 'Courier New', monospace;
+}
+
+textarea:focus {
+    border-color: var(--vermelho-escuro);
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.4);
+    /* NOVA FUNCIONALIDADE 2: transform scale com origin */
+    transform: scale(1.02);
+    transform-origin: center;
+}
+
+button {
+    padding: 18px;
+    font-size: 20px;
+    font-weight: bold;
+    background: linear-gradient(135deg, var(--vermelho-principal) 0%, var(--vermelho-escuro) 100%);
+    color: var(--branco);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 30px rgba(196, 30, 58, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /*NOVA FUNCIONALIDADE 3: Filter para efeitos visuais */
+    filter: brightness(1);
+}
+
+button:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(196, 30, 58, 0.7);
+    filter: brightness(1.2);
+}
+
+button:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.info-box {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border-left: 5px solid var(--vermelho-principal);
+    border-radius: 10px;
+}
+
+.info-box h3 {
+    color: var(--vermelho-escuro);
+    margin-bottom: 15px;
+}
+
+.info-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-box li {
+    padding: 8px 0;
+    color: #555;
+    font-size: 15px;
+}
+
+.resultado-page {
+    max-width: 900px;
+}
+
+.frase-analisada {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border-left: 5px solid var(--vermelho-principal);
+}
+
+.frase-analisada h3 {
+    color: var(--vermelho-escuro);
+    margin-bottom: 10px;
+}
+
+.frase-analisada p {
+    font-size: 18px;
+    color: #333;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+.estatisticas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--branco);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+
+.stat-card.consoantes {
+    border-top: 5px solid #4169e1;
+}
+
+.stat-card.vogais {
+    border-top: 5px solid #32cd32;
+}
+
+.stat-card.total {
+    border-top: 5px solid #708090;
+}
+
+.stat-card.porcentagem {
+    border-top: 5px solid var(--vermelho-principal);
+}
+
+.stat-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.stat-numero {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--vermelho-escuro);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lista-consoantes {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.lista-consoantes h3 {
+    color: var(--vermelho-escuro);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.consoantes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 15px;
+}
+
+.consoante-item {
+    background: linear-gradient(135deg, var(--vermelho-principal), var(--vermelho-escuro));
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(196, 30, 58, 0.3);
+    transition: all 0.3s ease;
+}
+
+.consoante-item:hover {
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 8px 25px rgba(196, 30, 58, 0.5);
+}
+
+.consoante-letra {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--branco);
+    text-transform: uppercase;
+}
+
+.btn-voltar {
+    width: 100%;
+    background: linear-gradient(135deg, #666, #333);
+    margin-top: 0;
+}
+
+.btn-voltar:hover {
+    background: linear-gradient(135deg, #555, #222);
+}
+
+a {
+    text-decoration: none;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .estatisticas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-numero {
+        font-size: 36px;
+    }
+
+    .consoantes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        gap: 10px;
+    }
+
+    .consoante-letra {
+        font-size: 22px;
+    }
+}
