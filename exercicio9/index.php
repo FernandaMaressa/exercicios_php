@@ -18,7 +18,7 @@
         <label for="frase">Digite sua frase para análise:</label>
         <textarea id="frase" name="frase" rows="4" required placeholder="Ex: Programação em PHP é incrível!"></textarea>
 
-        <button type="submit">Analisar Consoantes</button>
+        <button type="submit">Contar Consoantes</button>
     </form>
 
     <div class="info-box">
@@ -34,3 +34,4 @@
 
 </body>
 </html>
+
