@@ -12,22 +12,25 @@ if (empty($frase)) {
 }
 
 $fraseMinuscula = mb_strtolower($frase, 'UTF-8');
-$consoantes = 'bcdfghjklmnpqrstvwxyz';
-$vogais = 'aeiouáéíóúâêôãõ';
+$consoantes = 'bcdfghjklmnpqrstvwxyzç';
+$vogais = 'aeiouáàâãéèêíìîóòôõúùû';
+
 $totalConsoantes = 0;
 $totalVogais = 0;
 $totalLetras = 0;
 $listaConsoantes = [];
-$tamanho = mb_strlen($fraseMinuscula);
+
+$tamanho = mb_strlen($fraseMinuscula, 'UTF-8');
 
 for ($i = 0; $i < $tamanho; $i++) {
-    $caractere = mb_substr($fraseMinuscula, $i, 1);
-    if (mb_strpos($consoantes, $caractere) !== false) {
+    $caractere = mb_substr($fraseMinuscula, $i, 1, 'UTF-8');
+    
+    if (mb_strpos($consoantes, $caractere, 0, 'UTF-8') !== false) {
         $totalConsoantes++;
         $totalLetras++;
         $listaConsoantes[] = $caractere;
     }
-    elseif (mb_strpos($vogais, $caractere) !== false) {
+    elseif (mb_strpos($vogais, $caractere, 0, 'UTF-8') !== false) {
         $totalVogais++;
         $totalLetras++;
     }
@@ -35,6 +38,7 @@ for ($i = 0; $i < $tamanho; $i++) {
 
 $porcentagemConsoantes = $totalLetras > 0 ? ($totalConsoantes / $totalLetras) * 100 : 0;
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
