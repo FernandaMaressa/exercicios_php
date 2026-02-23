@@ -2,6 +2,7 @@ describe('Exercício 8 - Contador Regressivo', () => {
   beforeEach(() => {
     cy.visit('/exercicio8/index.php')
   })
+
   //Teste de INTERFACE
 
  it('Deve exibir o formulário corretamente', () => {
@@ -32,7 +33,7 @@ describe('Exercício 8 - Contador Regressivo', () => {
     cy.url().should('include', '/exercicio8/processar.php')
     cy.contains('Resultado da Contagem').should('be.visible')
     
-    // Verifica que os números aparecem
+    
     cy.get('.resultado').should('contain', '5')
     cy.get('.resultado').should('contain', '4')
     cy.get('.resultado').should('contain', '3')
