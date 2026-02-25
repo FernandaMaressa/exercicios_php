@@ -15,11 +15,8 @@
         <li><a href="exercicio5/">Exercício 5 - Avaliação de Desempenho Escolar </a></li>
         <li><a href="exercicio6/">Exercício 6 - Simulador de Descontos por Categoria </a></li>
         <li><a href="exercicio7/">Exercício 7 - Sistema de Reserva de Sala de Estudo</a></li>
-<<<<<<< HEAD
         <li><a href="exercicio8/">Exercício 8 - Contador Regressivo Personalizado</a></li>
-        <li><a href="exercicio9/">Exercicio 9 - Analisador de Consoantes</a></li>
-=======
->>>>>>> dc3e50e (front do exercicio 7)
+        <li><a href="exercicio9/">Exercicio 9 - Análise de Consoantes</a></li>
     </ul>
 
 </body>
