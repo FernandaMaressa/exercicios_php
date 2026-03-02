@@ -259,6 +259,10 @@ tbody tr:last-child td {
     opacity: 0.85;
 }
 
+tbody tr.linha-economico td { background-color: #c8f7c5; }
+tbody tr.linha-moderado  td { background-color: #fef9c3; }
+tbody tr.linha-alto      td { background-color: #ffd6d6; }
+
 /* responsividade */
 @media (max-width: 480px) {
     main {
