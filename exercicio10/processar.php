@@ -1,25 +1,13 @@
 <?php
 // ============================================================
-// // Entrega 2: Sem banco de dados (mock array)
-// Na entrega 3, vou substituir o mock pelo conexao.php + MySQL
+// Entrega 3: MySQL via PDO | Banco: novos_titans_db | Tabela: exercicio10
 // ============================================================
-// MOCK DE DADOS — vou substituir por MySQL na entrega 3
-// Na entrega 3, vou remover este array e usar:
-//   require_once 'conexao.php';
-// e as funções de INSERT/SELECT com PDO
+
+require_once 'conexao.php';
+
 // ─────────────────────────────────────────────
-$consumos_mock = [
-    ['id' => 1,  'data_consumo' => '2026-02-10', 'consumo_kwh' => 85.00,  'classificacao' => 'Econômico'],
-    ['id' => 2,  'data_consumo' => '2026-02-11', 'consumo_kwh' => 130.00, 'classificacao' => 'Moderado'],
-    ['id' => 3,  'data_consumo' => '2026-02-12', 'consumo_kwh' => 240.00, 'classificacao' => 'Alto'],
-    ['id' => 4,  'data_consumo' => '2026-02-13', 'consumo_kwh' => 95.50,  'classificacao' => 'Econômico'],
-    ['id' => 5,  'data_consumo' => '2026-02-14', 'consumo_kwh' => 175.00, 'classificacao' => 'Moderado'],
-    ['id' => 6,  'data_consumo' => '2026-02-15', 'consumo_kwh' => 210.00, 'classificacao' => 'Alto'],
-    ['id' => 7,  'data_consumo' => '2026-02-16', 'consumo_kwh' => 99.00,  'classificacao' => 'Econômico'],
-    ['id' => 8,  'data_consumo' => '2026-02-17', 'consumo_kwh' => 160.00, 'classificacao' => 'Moderado'],
-    ['id' => 9,  'data_consumo' => '2026-02-18', 'consumo_kwh' => 220.00, 'classificacao' => 'Alto'],
-    ['id' => 10, 'data_consumo' => '2026-02-19', 'consumo_kwh' => 140.00, 'classificacao' => 'Moderado'],
-];
+// FUNÇÕES AUXILIARES
+// ─────────────────────────────────────────────
 
 /** Classifica o consumo conforme as faixas do exercício */
 function classificarConsumo(float $kwh): string {
@@ -32,6 +20,7 @@ function classificarConsumo(float $kwh): string {
     }
 }
 
+/** Retorna a classe CSS da linha conforme a classificação */
 function classeLinha(string $classificacao): string {
     return match($classificacao) {
         'Econômico' => 'linha-economico',
@@ -41,19 +30,21 @@ function classeLinha(string $classificacao): string {
     };
 }
 
+/** Formata a data de YYYY-MM-DD para DD/MM/YYYY */
 function formatarData(string $data): string {
     $dt = DateTime::createFromFormat('Y-m-d', $data);
     return $dt ? $dt->format('d/m/Y') : $data;
 }
 
-
+// ─────────────────────────────────────────────
 // PROCESSAMENTO DA AÇÃO
+// ─────────────────────────────────────────────
 
 $mensagem = '';
 $tipo_msg = '';
 $acao     = $_POST['acao'] ?? '';
 
-//AÇÃO: REGISTRAR
+// ── AÇÃO: REGISTRAR ──────────────────────────
 if ($acao === 'registrar') {
     $data_consumo = trim($_POST['data_consumo'] ?? '');
     $consumo_kwh  = floatval($_POST['consumo_kwh'] ?? 0);
@@ -67,40 +58,46 @@ if ($acao === 'registrar') {
     } else {
         $classificacao = classificarConsumo($consumo_kwh);
 
-        // Entrega 3: vou substituir pelo INSERT no MySQL 
-        $consumos_mock[] = [
-            'id'            => count($consumos_mock) + 1,
-            'data_consumo'  => $data_consumo,
-            'consumo_kwh'   => $consumo_kwh,
-            'classificacao' => $classificacao,
-        ];
-        // Nota da dev: como não temos banco, os dados não persistem. O registro só existe durante esta execução.
+        $stmt = $pdo->prepare('
+            INSERT INTO exercicio10 (data_consumo, consumo_kwh, classificacao)
+            VALUES (:data_consumo, :consumo_kwh, :classificacao)
+        ');
+        $stmt->execute([
+            ':data_consumo'  => $data_consumo,
+            ':consumo_kwh'   => $consumo_kwh,
+            ':classificacao' => $classificacao,
+        ]);
 
         $mensagem = 'Consumo registrado com sucesso!';
         $tipo_msg = 'sucesso';
     }
 }
 
-//AÇÃO INVÁLIDA: redireciona
+// ── AÇÃO INVÁLIDA: redireciona ───────────────
 if ($acao !== 'registrar' && $acao !== 'relatorio') {
     header('Location: index.php');
     exit;
 }
 
-// Ordenando por data_consumo ASC 
-usort($consumos_mock, fn($a, $b) => strcmp($a['data_consumo'], $b['data_consumo']));
+// ── BUSCAR TODOS OS REGISTROS ORDENADOS POR DATA ──
+$stmt = $pdo->query('
+    SELECT id, data_consumo, consumo_kwh, classificacao
+    FROM exercicio10
+    ORDER BY data_consumo ASC
+');
+$consumos = $stmt->fetchAll();
 
-// CÁLCULO DAS ESTATÍSTICAS 
-$total    = count($consumos_mock);
+// ── CÁLCULO DAS ESTATÍSTICAS ─────────────────
+$total    = count($consumos);
 $qtd_eco  = 0;
 $qtd_mod  = 0;
 $qtd_alto = 0;
 $soma_kwh = 0;
-$maior    = PHP_FLOAT_MIN;
+$maior    = 0;
 $menor    = PHP_FLOAT_MAX;
 
-foreach ($consumos_mock as $r) {
-    $kwh = $r['consumo_kwh'];
+foreach ($consumos as $r) {
+    $kwh = floatval($r['consumo_kwh']);
     $soma_kwh += $kwh;
     if ($kwh > $maior) $maior = $kwh;
     if ($kwh < $menor) $menor = $kwh;
@@ -114,7 +111,7 @@ $pct_eco  = $total > 0 ? round(($qtd_eco  / $total) * 100) : 0;
 $pct_mod  = $total > 0 ? round(($qtd_mod  / $total) * 100) : 0;
 $pct_alto = $total > 0 ? round(($qtd_alto / $total) * 100) : 0;
 
-if ($total === 0) { $maior = 0; $menor = 0; }
+if ($total === 0) { $menor = 0; }
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -140,7 +137,7 @@ if ($total === 0) { $maior = 0; $menor = 0; }
     </div>
     <?php endif; ?>
 
-    <!-- CARD: ESTATÍSTICAS  -->
+    <!-- ── CARD: ESTATÍSTICAS ── -->
     <section class="card-relatorio" id="estatisticas">
         <h2>📊 Estatísticas Gerais</h2>
         <div class="stats-grid">
@@ -197,7 +194,7 @@ if ($total === 0) { $maior = 0; $menor = 0; }
         </div>
     </section>
 
-    <!-- CARD: TABELA DE REGISTROS -->
+    <!-- ── CARD: TABELA DE REGISTROS ── -->
     <section class="card-relatorio" id="tabela-registros">
         <h2>📋 Registros de Consumo</h2>
         <div class="table-wrapper">
@@ -213,10 +210,10 @@ if ($total === 0) { $maior = 0; $menor = 0; }
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($consumos_mock as $r): ?>
+                    <?php foreach ($consumos as $r): ?>
                     <tr class="<?= classeLinha($r['classificacao']) ?>">
                         <td><?= formatarData($r['data_consumo']) ?></td>
-                        <td><?= number_format($r['consumo_kwh'], 2, ',', '.') ?> kWh</td>
+                        <td><?= number_format(floatval($r['consumo_kwh']), 2, ',', '.') ?> kWh</td>
                         <td><?= htmlspecialchars($r['classificacao']) ?></td>
                     </tr>
                     <?php endforeach; ?>
