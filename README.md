@@ -1,6 +1,6 @@
 # Exercícios PHP - Programação Web
 
-Este projeto contém exercícios de PHP utilizando Apache e Docker Compose.
+Este projeto contém exercícios de PHP utilizando Apache, MySQL e Docker Compose.
 
 ---
 
@@ -24,6 +24,8 @@ npm --version
 ### Requisitos de Sistema
 
 - Porta **8080** disponível (para o Apache)
+- Porta **3306** disponível (para o MySQL)
+- Porta **8081** disponível (para o phpMyAdmin)
 - Sistema operacional: Windows, Linux ou MacOS
 
 ---
@@ -52,33 +54,44 @@ cd exercicios_php
 
 ---
 
-## Rodando o Ambiente PHP com Docker
+## Rodando o Ambiente com Docker
 
 ### Passo 1: Suba os serviços com Docker Compose
 
 No terminal, dentro da pasta do projeto:
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
+
+Este comando sobe três serviços automaticamente:
+- **web** - Servidor PHP 8.2 com Apache
+- **db** - Banco de dados MySQL 8.0
+- **phpmyadmin** - Interface visual para gerenciar o banco
+
+O banco de dados `novos_titans_db` e as tabelas dos exercícios são criados automaticamente na primeira execução pelos arquivos `.sql` de cada exercício.
 
 ### Passo 2: Acesse no navegador
 
-Abra: [http://localhost:8080](http://localhost:8080)
+- Projeto: [http://localhost:8080](http://localhost:8080)
+- phpMyAdmin: [http://localhost:8081](http://localhost:8081)
+
+### Credenciais do banco de dados
+
+| Campo    | Valor            |
+|----------|------------------|
+| Host     | db               |
+| Banco    | novos_titans_db  |
+| Usuário  | root             |
+| Senha    | root             |
 
 ### Verificando se o ambiente subiu
 
 Execute:
 ```bash
-docker ps
+docker compose ps
 ```
 
-Deve aparecer algo como:
-```
-CONTAINER ID   IMAGE              COMMAND                  STATUS
-abc123def456   php:8.2-apache     "docker-php-entryp..."   Up 2 minutes
-```
-
-Se aparecer, o projeto está rodando com sucesso.
+Deve aparecer os três containers com status `Up`.
 
 ---
 
@@ -116,7 +129,8 @@ cypress/
 │   ├── exercicio3.cy.js
 │   ├── exercicio4.cy.js
 │   ├── exercicio5.cy.js
-│   └── exercicio6.cy.js
+│   ├── exercicio6.cy.js
+│   └── exercicio10.cy.js
 ├── fixtures/
 ├── support/
 └── cypress.config.js
@@ -128,14 +142,23 @@ cypress/
 
 ### Docker
 ```bash
+# Subir e reconstruir os containers
+docker compose up --build -d
+
 # Parar containers sem remover
 docker compose stop
 
-# Parar e remover containers
+# Parar e remover containers (mantém os dados do banco)
 docker compose down
 
-# Ver logs do container
+# Parar, remover containers e apagar volume do banco (reset completo)
+docker compose down -v
+
+# Ver logs de todos os containers
 docker compose logs -f
+
+# Ver logs apenas do banco de dados
+docker compose logs -f db
 
 # Reiniciar o ambiente
 docker compose restart
@@ -150,7 +173,7 @@ npx cypress open
 npx cypress run
 
 # Rodar teste específico
-npx cypress run --spec "cypress/e2e/exercicio6.cy.js"
+npx cypress run --spec "cypress/e2e/exercicio10.cy.js"
 
 # Rodar testes no Chrome
 npx cypress run --browser chrome
@@ -180,8 +203,6 @@ npm --version
 ```
 exercicios_php/
 ├── exercicio1/
-│   ├── front/
-│   └── back/
 ├── exercicio2/
 ├── exercicio3/
 ├── exercicio4/
@@ -190,10 +211,19 @@ exercicios_php/
 │   ├── index.php
 │   ├── processar.php
 │   └── style.css
+├── exercicio10/
+│   ├── db/
+│   │   └── banco.sql
+│   ├── img/
+│   ├── index.php
+│   ├── processar.php
+│   ├── conexao.php
+│   └── style.css
 ├── cypress/
 │   ├── e2e/
-│   │   └── exercicio6.cy.js
+│   │   └── exercicio10.cy.js
 │   └── support/
+├── Dockerfile
 ├── docker-compose.yml
 ├── package.json
 ├── cypress.config.js
@@ -205,19 +235,76 @@ exercicios_php/
 
 ## Configuração do Ambiente
 
+### Arquivo `Dockerfile`
+
+```dockerfile
+FROM php:8.2-apache
+
+RUN docker-php-ext-install pdo pdo_mysql
+
+RUN a2enmod rewrite
+
+COPY . /var/www/html/
+
+RUN chown -R www-data:www-data /var/www/html
+```
+
 ### Arquivo `docker-compose.yml`
 
-Este arquivo está na raiz do repositório:
 ```yaml
-version: "3.8"
-
 services:
+
   web:
-    image: php:8.2-apache
+    build: .
     ports:
       - "8080:80"
     volumes:
-      - ./:/var/www/html
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - titans-network
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: novos_titans_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./exercicio10/db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - titans-network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - db
+    networks:
+      - titans-network
+
+volumes:
+  db_data:
+
+networks:
+  titans-network:
+    driver: bridge
 ```
 
 ### Arquivo `package.json`
@@ -230,7 +317,8 @@ services:
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test": "cypress run",
-    "test:e6": "cypress run --spec 'cypress/e2e/exercicio6.cy.js'"
+    "test:e6": "cypress run --spec 'cypress/e2e/exercicio6.cy.js'",
+    "test:e10": "cypress run --spec 'cypress/e2e/exercicio10.cy.js'"
   },
   "devDependencies": {
     "cypress": "^13.6.0"
@@ -276,17 +364,34 @@ O projeto possui um `.gitignore` que ignora:
 
 ---
 
+## Banco de Dados
+
+O projeto utiliza MySQL 8.0 gerenciado pelo Docker. O banco `novos_titans_db` é criado automaticamente na primeira execução. Cada exercício que utiliza banco de dados possui sua própria pasta `db/` com o arquivo `banco.sql` contendo a estrutura da tabela correspondente.
+
+### Resetar o banco de dados
+
+Caso precise recriar o banco do zero (apaga todos os dados):
+```bash
+docker compose down -v
+docker compose up --build -d
+```
+
+### Acessar o phpMyAdmin
+
+Acesse [http://localhost:8081](http://localhost:8081) para visualizar e gerenciar os dados diretamente pelo navegador sem necessidade de instalar nenhuma ferramenta adicional.
+
+---
+
 ## Workflow Completo
 
 ### Para desenvolver
 ```bash
-# 1. Baixe o projeto (ZIP ou Git clone)
-# Se usar Git:
+# 1. Clone o projeto
 git clone https://github.com/FernandaMaressa/exercicios_php.git
 cd exercicios_php
 
 # 2. Suba o ambiente Docker
-docker compose up -d
+docker compose up --build -d
 
 # 3. Instale as dependências do Node
 npm install
@@ -296,6 +401,7 @@ npx cypress open
 
 # 5. Acesse no navegador para testar manualmente
 # http://localhost:8080
+# http://localhost:8081 (phpMyAdmin)
 ```
 
 ### Para rodar testes automatizados
@@ -306,15 +412,15 @@ docker compose up -d
 # Rode todos os testes
 npm test
 
-# Ou rode apenas o Exercício 6
-npm run test:e6
+# Ou rode apenas o Exercício 10
+npm run test:e10
 ```
 
 ---
 
 ## Troubleshooting
 
-### Problema: Porta 8080 já está em uso
+### Problema: Porta 8080, 8081 ou 3306 já está em uso
 ```bash
 # Linux/Mac:
 lsof -i :8080
@@ -331,6 +437,17 @@ netstat -ano | findstr :8080
 docker info
 
 # Reinicie o Docker Desktop
+```
+
+### Problema: Erro de conexão com o banco de dados
+```bash
+# Verifique se o container do banco subiu corretamente
+docker compose logs -f db
+
+# Aguarde a mensagem "ready for connections" antes de acessar o projeto
+# Se necessário, recrie o banco do zero
+docker compose down -v
+docker compose up --build -d
 ```
 
 ### Problema: Cypress não encontra baseUrl
@@ -361,6 +478,5 @@ npm install
 - **Documentação PHP:** [https://www.php.net/](https://www.php.net/)
 - **Documentação Docker:** [https://docs.docker.com/](https://docs.docker.com/)
 - **Documentação Cypress:** [https://docs.cypress.io/](https://docs.cypress.io/)
+- **Documentação MySQL:** [https://dev.mysql.com/doc/](https://dev.mysql.com/doc/)
 - **Node.js:** [https://nodejs.org/](https://nodejs.org/)
-
-
