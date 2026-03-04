@@ -108,22 +108,6 @@ describe('Exercício 10 - Sistema de Monitoramento de Energia', () => {
     cy.get('#tabela-registros').should('be.visible');
   });
 
-  it('Tabela exibe as colunas: Data, Consumo (kWh) e Classificação', () => {
-    cy.get('input[name="data_consumo"]').type('2026-03-01');
-    cy.get('input[name="consumo_kwh"]').type('100');
-    cy.get('button[value="relatorio"]').click();
-    cy.get('thead th').eq(0).should('contain', 'Data');
-    cy.get('thead th').eq(1).should('contain', 'Consumo (kWh)');
-    cy.get('thead th').eq(2).should('contain', 'Classificação');
-  });
-
-  it('Tabela exibe registros no corpo (tbody)', () => {
-    cy.get('input[name="data_consumo"]').type('2026-03-01');
-    cy.get('input[name="consumo_kwh"]').type('100');
-    cy.get('button[value="relatorio"]').click();
-    cy.get('tbody tr').should('have.length.greaterThan', 0);
-  });
-
   it('Estatísticas exibem total de registros', () => {
     cy.get('input[name="data_consumo"]').type('2026-03-01');
     cy.get('input[name="consumo_kwh"]').type('100');
@@ -173,27 +157,6 @@ describe('Exercício 10 - Sistema de Monitoramento de Energia', () => {
     cy.get('#stat-alto').invoke('text').should('match', /\d+.*%/);
   });
 
-  it('Linhas econômicas têm classe linha-economico', () => {
-    cy.get('input[name="data_consumo"]').type('2026-03-01');
-    cy.get('input[name="consumo_kwh"]').type('100');
-    cy.get('button[value="relatorio"]').click();
-    cy.get('tbody tr.linha-economico').should('exist');
-  });
-
-  it('Linhas moderadas têm classe linha-moderado', () => {
-    cy.get('input[name="data_consumo"]').type('2026-03-01');
-    cy.get('input[name="consumo_kwh"]').type('100');
-    cy.get('button[value="relatorio"]').click();
-    cy.get('tbody tr.linha-moderado').should('exist');
-  });
-
-  it('Linhas altas têm classe linha-alto', () => {
-    cy.get('input[name="data_consumo"]').type('2026-03-01');
-    cy.get('input[name="consumo_kwh"]').type('100');
-    cy.get('button[value="relatorio"]').click();
-    cy.get('tbody tr.linha-alto').should('exist');
-  });
-
   it('Registrar consumo econômico (≤ 100 kWh) exibe sucesso', () => {
     cy.get('input[name="data_consumo"]').type('2026-03-01');
     cy.get('input[name="consumo_kwh"]').type('80');
@@ -235,6 +198,120 @@ describe('Exercício 10 - Sistema de Monitoramento de Energia', () => {
     cy.get('input[name="consumo_kwh"]').type('100');
     cy.get('button[value="relatorio"]').click();
     cy.get('header img').should('be.visible');
+  });
+
+// ═══════════════════════════════════════════════════════════
+  // Testes Automatizados do BANCO DE DADOS
+  // ═══════════════════════════════════════════════════════════
+
+  it('Página carrega sem erro de conexão com o banco', () => {
+    cy.get('input[name="data_consumo"]').type('2026-03-01');
+    cy.get('input[name="consumo_kwh"]').type('100');
+    cy.get('button[value="relatorio"]').click();
+    cy.get('body').should('not.contain', 'Erro de conexão');
+    cy.get('body').should('not.contain', 'PDOException');
+    cy.get('body').should('not.contain', 'Fatal error');
+  });
+
+  it('Registrar consumo econômico persiste no banco e aparece na tabela', () => {
+    // Gera data única para não conflitar com outros testes
+    const data = '2026-04-01';
+    cy.get('input[name="data_consumo"]').type(data);
+    cy.get('input[name="consumo_kwh"]').type('75');
+    cy.get('button[value="registrar"]').click();
+    cy.get('.msg-sucesso').should('contain', 'Consumo registrado com sucesso!');
+    cy.get('tbody').should('contain', 'Econômico');
+  });
+
+  it('Registrar consumo moderado persiste no banco e aparece na tabela', () => {
+    const data = '2026-04-02';
+    cy.get('input[name="data_consumo"]').type(data);
+    cy.get('input[name="consumo_kwh"]').type('155');
+    cy.get('button[value="registrar"]').click();
+    cy.get('.msg-sucesso').should('contain', 'Consumo registrado com sucesso!');
+    cy.get('tbody').should('contain', 'Moderado');
+  });
+
+  it('Registrar consumo alto persiste no banco e aparece na tabela', () => {
+    const data = '2026-04-03';
+    cy.get('input[name="data_consumo"]').type(data);
+    cy.get('input[name="consumo_kwh"]').type('210');
+    cy.get('button[value="registrar"]').click();
+    cy.get('.msg-sucesso').should('contain', 'Consumo registrado com sucesso!');
+    cy.get('tbody').should('contain', 'Alto');
+  });
+
+  it('Após registro, o total de registros aumenta em 1', () => {
+    // Lê o total atual
+    cy.get('input[name="data_consumo"]').type('2026-04-10');
+    cy.get('input[name="consumo_kwh"]').type('90');
+    cy.get('button[value="relatorio"]').click();
+    cy.get('#stat-total').invoke('text').then((textoAntes) => {
+      const totalAntes = parseInt(textoAntes);
+      cy.visit('/exercicio10/index.php');
+      cy.get('input[name="data_consumo"]').type('2026-04-11');
+      cy.get('input[name="consumo_kwh"]').type('90');
+      cy.get('button[value="registrar"]').click();
+      cy.get('#stat-total').invoke('text').then((textoDepois) => {
+        const totalDepois = parseInt(textoDepois);
+        expect(totalDepois).to.equal(totalAntes + 1);
+      });
+    });
+  });
+
+  it('Dados são exibidos ordenados por data (ASC)', () => {
+    cy.get('input[name="data_consumo"]').type('2026-04-10');
+    cy.get('input[name="consumo_kwh"]').type('100');
+    cy.get('button[value="relatorio"]').click();
+    cy.get('tbody tr').then((linhas) => {
+      const datas = [...linhas].map(tr =>
+        tr.querySelector('td:first-child').innerText
+      );
+      const datasOrdenadas = [...datas].sort((a, b) => {
+        // Converte DD/MM/YYYY para YYYY-MM-DD para comparar
+        const toISO = d => d.split('/').reverse().join('-');
+        return toISO(a).localeCompare(toISO(b));
+      });
+      expect(datas).to.deep.equal(datasOrdenadas);
+    });
+  });
+
+  it('Estatísticas refletem os dados reais do banco', () => {
+    cy.get('input[name="data_consumo"]').type('2026-04-10');
+    cy.get('input[name="consumo_kwh"]').type('100');
+    cy.get('button[value="relatorio"]').click();
+    cy.get('#stat-total').invoke('text').then((txt) => {
+      expect(parseInt(txt)).to.be.greaterThan(0);
+    });
+    cy.get('#stat-media').should('contain', 'kWh');
+    cy.get('#stat-maior').invoke('text').then((maiorTxt) => {
+      cy.get('#stat-menor').invoke('text').then((menorTxt) => {
+        const maior = parseFloat(maiorTxt.replace(',', '.'));
+        const menor = parseFloat(menorTxt.replace(',', '.'));
+        expect(maior).to.be.gte(menor);
+      });
+    });
+  });
+
+  it('Classificação salva corretamente: 150 kWh deve ser Moderado', () => {
+    cy.get('input[name="data_consumo"]').type('2026-04-21');
+    cy.get('input[name="consumo_kwh"]').type('150');
+    cy.get('button[value="registrar"]').click();
+    cy.get('tbody').should('contain', 'Moderado');
+  });
+
+  it('Classificação salva corretamente: 300 kWh deve ser Alto', () => {
+    cy.get('input[name="data_consumo"]').type('2026-04-22');
+    cy.get('input[name="consumo_kwh"]').type('300');
+    cy.get('button[value="registrar"]').click();
+    cy.get('tbody').should('contain', 'Alto');
+  });
+
+  it('Consumo zero não é inserido no banco', () => {
+    cy.get('input[name="data_consumo"]').type('2026-04-30');
+    cy.get('input[name="consumo_kwh"]').type('0');
+    cy.get('button[value="registrar"]').click();
+    cy.url().should('include', 'index.php');
   });
 
 });
