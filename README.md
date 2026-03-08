@@ -54,6 +54,12 @@ cd exercicios_php
 
 ---
 
+## Variáveis de Ambiente
+
+As credenciais do banco de dados são configuradas no `docker-compose.yml` via variáveis de ambiente. Consulte o arquivo `.env.example` para saber quais variáveis precisam ser definidas antes de subir o ambiente.
+
+---
+
 ## Rodando o Ambiente com Docker
 
 ### Passo 1: Suba os serviços com Docker Compose
@@ -68,21 +74,12 @@ Este comando sobe três serviços automaticamente:
 - **db** - Banco de dados MySQL 8.0
 - **phpmyadmin** - Interface visual para gerenciar o banco
 
-O banco de dados `novos_titans_db` e as tabelas dos exercícios são criados automaticamente na primeira execução pelos arquivos `.sql` de cada exercício.
+O banco de dados e as tabelas dos exercícios são criados automaticamente na primeira execução pelos arquivos `.sql` de cada exercício.
 
 ### Passo 2: Acesse no navegador
 
 - Projeto: [http://localhost:8080](http://localhost:8080)
 - phpMyAdmin: [http://localhost:8081](http://localhost:8081)
-
-### Credenciais do banco de dados
-
-| Campo    | Valor            |
-|----------|------------------|
-| Host     | db               |
-| Banco    | novos_titans_db  |
-| Usuário  | root             |
-| Senha    | root             |
 
 ### Verificando se o ambiente subiu
 
@@ -126,10 +123,7 @@ cypress/
 ├── e2e/
 │   ├── exercicio1.cy.js
 │   ├── exercicio2.cy.js
-│   ├── exercicio3.cy.js
-│   ├── exercicio4.cy.js
-│   ├── exercicio5.cy.js
-│   ├── exercicio6.cy.js
+│   ├── ...
 │   └── exercicio10.cy.js
 ├── fixtures/
 ├── support/
@@ -203,14 +197,12 @@ npm --version
 ```
 exercicios_php/
 ├── exercicio1/
-├── exercicio2/
-├── exercicio3/
-├── exercicio4/
-├── exercicio5/
+├── ...
 ├── exercicio6/
 │   ├── index.php
 │   ├── processar.php
 │   └── style.css
+├── ...
 ├── exercicio10/
 │   ├── db/
 │   │   └── banco.sql
@@ -234,78 +226,6 @@ exercicios_php/
 ---
 
 ## Configuração do Ambiente
-
-### Arquivo `Dockerfile`
-
-```dockerfile
-FROM php:8.2-apache
-
-RUN docker-php-ext-install pdo pdo_mysql
-
-RUN a2enmod rewrite
-
-COPY . /var/www/html/
-
-RUN chown -R www-data:www-data /var/www/html
-```
-
-### Arquivo `docker-compose.yml`
-
-```yaml
-services:
-
-  web:
-    build: .
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - titans-network
-
-  db:
-    image: mysql:8.0
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: novos_titans_db
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./exercicio10/db:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - titans-network
-
-  phpmyadmin:
-    image: phpmyadmin:latest
-    restart: always
-    ports:
-      - "8081:80"
-    environment:
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: root
-    depends_on:
-      - db
-    networks:
-      - titans-network
-
-volumes:
-  db_data:
-
-networks:
-  titans-network:
-    driver: bridge
-```
 
 ### Arquivo `package.json`
 ```json
@@ -366,7 +286,7 @@ O projeto possui um `.gitignore` que ignora:
 
 ## Banco de Dados
 
-O projeto utiliza MySQL 8.0 gerenciado pelo Docker. O banco `novos_titans_db` é criado automaticamente na primeira execução. Cada exercício que utiliza banco de dados possui sua própria pasta `db/` com o arquivo `banco.sql` contendo a estrutura da tabela correspondente.
+O projeto utiliza MySQL 8.0 gerenciado pelo Docker. O banco é criado automaticamente na primeira execução. Cada exercício que utiliza banco de dados possui sua própria pasta `db/` com o arquivo `banco.sql` contendo a estrutura da tabela correspondente.
 
 ### Resetar o banco de dados
 
