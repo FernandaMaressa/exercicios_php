@@ -64,6 +64,11 @@
             <span class="title">Sistema de Monitoramento de Consumo de Energia Residencial</span>
             <span class="arrow">→</span>
         </a></li>
+        <li><a href="exercicio11/">
+	    <span class="num">11</span>
+	    <span class="title">Calculadora de Múltiplos</span>
+	    <span class="arrow">→</span>
+	</a></li>
     </ul>
 
     <footer>© Fernanda Maressa Dev</footer>
