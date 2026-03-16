@@ -1,42 +1,14 @@
 <?php
 // ============================================================
 // processar.php — Calculadora de Múltiplos
-// Entrega 2: Sem banco de dados (mock array)
-// Na entrega 3, vou substituir o mock pelo conexao.php + MySQL
+// Entrega 3: Com banco de dados MySQL via PDO
 // ============================================================
 
-// MOCK DE HISTÓRICO 
-$historico_mock = [
-    [
-        'numero_base'  => 5,
-        'indice'       => 1,
-        'valor'        => 5,
-        'paridade'     => 'Ímpar',
-        'ordenacao'    => 'crescente',
-        'filtro'       => 'todos',
-        'data_calculo' => '2026-03-01 10:00:00',
-    ],
-    [
-        'numero_base'  => 5,
-        'indice'       => 2,
-        'valor'        => 10,
-        'paridade'     => 'Par',
-        'ordenacao'    => 'crescente',
-        'filtro'       => 'todos',
-        'data_calculo' => '2026-03-01 10:00:00',
-    ],
-    [
-        'numero_base'  => 4,
-        'indice'       => 1,
-        'valor'        => 4,
-        'paridade'     => 'Par',
-        'ordenacao'    => 'decrescente',
-        'filtro'       => 'pares',
-        'data_calculo' => '2026-03-02 14:30:00',
-    ],
-];
+require_once 'conexao.php';
 
+// ─────────────────────────────────────────────
 // FUNÇÕES AUXILIARES
+// ─────────────────────────────────────────────
 
 /** Verifica se um valor é par */
 function ehPar(float $valor): bool {
@@ -54,11 +26,13 @@ function formatarDataHora(string $data): string {
     return $dt ? $dt->format('d/m/Y H:i') : $data;
 }
 
+// ─────────────────────────────────────────────
 // RECEBER E VALIDAR DADOS
+// ─────────────────────────────────────────────
 
-$acao       = $_POST['acao']       ?? $_GET['acao']       ?? '';
-$erro       = '';
-$multiplos  = [];
+$acao        = $_POST['acao']       ?? $_GET['acao']       ?? '';
+$erro        = '';
+$multiplos   = [];
 $numero_base = null;
 $limite      = 10;
 $ordenacao   = 'crescente';
@@ -104,9 +78,9 @@ if ($acao === 'calcular') {
         for ($i = 1; $i <= $limite; $i++) {
             $valor = $numero_base * $i;
             $todos_multiplos[] = [
-                'indice'    => $i,
-                'valor'     => $valor,
-                'paridade'  => paridade($valor),
+                'indice'   => $i,
+                'valor'    => $valor,
+                'paridade' => paridade($valor),
             ];
         }
 
@@ -130,62 +104,75 @@ if ($acao === 'calcular') {
             usort($multiplos, fn($a, $b) => $b['valor'] <=> $a['valor']);
         }
 
-        // ── Salvar no mock (entrega 3: INSERT no MySQL) ──
-        $data_calculo = date('Y-m-d H:i:s');
+        // ── Salvar cada múltiplo no banco ─────
+        $stmt = $pdo->prepare('
+            INSERT INTO exercicio11
+                (numero_base, indice, valor, paridade, ordenacao, filtro)
+            VALUES
+                (:numero_base, :indice, :valor, :paridade, :ordenacao, :filtro)
+        ');
+
         foreach ($multiplos as $m) {
-            $historico_mock[] = [
-                'numero_base'  => $numero_base,
-                'indice'       => $m['indice'],
-                'valor'        => $m['valor'],
-                'paridade'     => $m['paridade'],
-                'ordenacao'    => $ordenacao,
-                'filtro'       => $filtro,
-                'data_calculo' => $data_calculo,
-            ];
+            $stmt->execute([
+                ':numero_base' => $numero_base,
+                ':indice'      => $m['indice'],
+                ':valor'       => $m['valor'],
+                ':paridade'    => $m['paridade'],
+                ':ordenacao'   => $ordenacao,
+                ':filtro'      => $filtro,
+            ]);
         }
     }
 
 } elseif ($acao !== 'historico') {
-    // Ação inválida: redireciona
     header('Location: index.php');
     exit;
 }
 
-// HISTÓRICO — filtros e ordenação
+// ─────────────────────────────────────────────
+// HISTÓRICO — filtros e ordenação via MySQL
+// ─────────────────────────────────────────────
 
 $filtro_base = $_GET['filtro_base'] ?? $_POST['filtro_base'] ?? '';
 $filtro_data = $_GET['filtro_data'] ?? $_POST['filtro_data'] ?? '';
 $ordem_hist  = $_GET['ordem_hist']  ?? $_POST['ordem_hist']  ?? 'data_desc';
 
-// Filtrar histórico (entrega 3: WHERE no MySQL)
-$historico_filtrado = $historico_mock;
+// Montar query dinâmica
+$where      = [];
+$params     = [];
 
 if ($filtro_base !== '') {
-    $historico_filtrado = array_filter(
-        $historico_filtrado,
-        fn($r) => $r['numero_base'] == floatval($filtro_base)
-    );
+    $where[]              = 'numero_base = :filtro_base';
+    $params[':filtro_base'] = floatval($filtro_base);
 }
 
 if ($filtro_data !== '') {
-    $historico_filtrado = array_filter(
-        $historico_filtrado,
-        fn($r) => str_starts_with($r['data_calculo'], $filtro_data)
-    );
+    $where[]              = 'DATE(data_calculo) = :filtro_data';
+    $params[':filtro_data'] = $filtro_data;
 }
 
-// Ordenar histórico
-usort($historico_filtrado, function($a, $b) use ($ordem_hist) {
-    return match($ordem_hist) {
-        'base_asc'  => $a['numero_base'] <=> $b['numero_base'],
-        'base_desc' => $b['numero_base'] <=> $a['numero_base'],
-        'data_asc'  => $a['data_calculo'] <=> $b['data_calculo'],
-        default     => $b['data_calculo'] <=> $a['data_calculo'], // data_desc
-    };
-});
+$clausula_where = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
-$historico_filtrado = array_values($historico_filtrado);
+$order_map = [
+    'data_desc'  => 'data_calculo DESC',
+    'data_asc'   => 'data_calculo ASC',
+    'base_asc'   => 'numero_base ASC',
+    'base_desc'  => 'numero_base DESC',
+];
+
+$order_sql = $order_map[$ordem_hist] ?? 'data_calculo DESC';
+
+$stmt_hist = $pdo->prepare("
+    SELECT id, numero_base, indice, valor, paridade, ordenacao, filtro,
+           data_calculo
+    FROM exercicio11
+    $clausula_where
+    ORDER BY $order_sql
+");
+$stmt_hist->execute($params);
+$historico_filtrado = $stmt_hist->fetchAll();
 $total_historico    = count($historico_filtrado);
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -227,6 +214,7 @@ $total_historico    = count($historico_filtrado);
         </div>
 
         <?php else: ?>
+        <!-- ── Resumo ── -->
         <section class="card" id="card-resumo">
             <div class="card-header">
                 <h2>Resumo</h2>
@@ -269,6 +257,7 @@ $total_historico    = count($historico_filtrado);
             </div>
         </section>
 
+        <!-- ── Tabela de múltiplos ── -->
         <section class="card" id="card-multiplos">
             <div class="card-header">
                 <h2>Múltiplos Calculados</h2>
@@ -287,9 +276,7 @@ $total_historico    = count($historico_filtrado);
                         <tbody>
                             <?php foreach ($multiplos as $pos => $m): ?>
                             <tr>
-                                <td class="col-posicao">
-                                    <?= ($pos + 1) ?>º
-                                </td>
+                                <td class="col-posicao"><?= ($pos + 1) ?>º</td>
                                 <td class="col-valor">
                                     <?= number_format($m['valor'], 2, ',', '.') ?>
                                 </td>
@@ -309,6 +296,7 @@ $total_historico    = count($historico_filtrado);
 
     <?php endif; ?>
 
+    <!-- ── Histórico de cálculos ── -->
     <section class="card" id="card-historico">
         <div class="card-header">
             <h2>Histórico de Cálculos</h2>
@@ -413,7 +401,7 @@ $total_historico    = count($historico_filtrado);
 </main>
 
 <footer>
-    <p>© Fernanda Maressa Dev</p>
+   <p>© Fernanda Maressa Dev</p>
 </footer>
 
 </body>
