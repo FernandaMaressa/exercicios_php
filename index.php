@@ -69,6 +69,10 @@
 	    <span class="title">Calculadora de Múltiplos</span>
 	    <span class="arrow">→</span>
 	</a></li>
+        <li><a href="exercicio12/">
+        <span class="num">12</span>
+        <span class="title">Gerador de Escada de Motivação</span>
+        <span class="arrow">→</span>
     </ul>
 
     <footer>© Fernanda Maressa Dev</footer>
