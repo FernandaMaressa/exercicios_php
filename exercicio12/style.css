@@ -626,3 +626,111 @@ body {
   .header-nav .nav-link { padding: 6px 10px; font-size: 0.78rem; }
   .btn-gerar { font-size: 0.95rem; }
 }
+
+/* ── Histórico — classes adicionais (historico.php) ────────── */
+
+/* Resumo */
+.resumo-card { padding-bottom: 4px; }
+
+.resumo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 20px 28px 28px;
+}
+
+.resumo-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--orange-pale);
+  border: 1.5px solid var(--orange-mid);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+}
+
+.resumo-icone { font-size: 1.8rem; flex-shrink: 0; }
+
+.resumo-valor {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--brown);
+  line-height: 1.2;
+}
+
+.resumo-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+.resumo-label em {
+  font-style: normal;
+  color: var(--orange);
+}
+
+/* Filtros */
+.filtros-card { padding-bottom: 4px; }
+
+.filtros-form { padding: 20px 28px 24px; }
+
+.filtros-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.filtros-acoes {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filtros-acoes .btn-gerar {
+  flex: none;
+  width: auto;
+  padding: 12px 28px;
+}
+
+/* Botão recriar escada na tabela */
+.btn-recriar {
+  display: inline-block;
+  padding: 5px 12px;
+  background: var(--orange-pale);
+  color: var(--brown-mid);
+  border: 1.5px solid var(--orange-mid);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--trans), color var(--trans);
+}
+
+.btn-recriar:hover {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+/* Confirmação — id do registro salvo */
+.confirmacao-id {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  margin-top: 6px;
+}
+
+/* Responsivo historico.php */
+@media (max-width: 680px) {
+  .resumo-grid    { grid-template-columns: 1fr; padding: 16px; }
+  .filtros-grid   { grid-template-columns: 1fr; }
+  .filtros-form   { padding: 16px; }
+  .filtros-acoes .btn-gerar { width: 100%; }
+}
