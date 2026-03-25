@@ -1,11 +1,11 @@
 <?php
 // ============================================================
-// processar.php — Escada da Motivação • Exercício 12
-// Versão MOCK — sem banco de dados (Entrega 2)
-// Na Entrega 3 será refatorado com conexao.php + PDO
+// Versão FINAL — com banco de dados via conexao.php + PDO
 // ============================================================
 
-// ── 1. Receber e validar inputs ──────────────────────────
+require_once 'conexao.php';
+
+// ── 1. Receber e validar inputs ──────────────────────────────
 $erros = [];
 
 $meta    = isset($_POST['meta'])    ? trim($_POST['meta'])    : '';
@@ -38,94 +38,56 @@ if (!in_array($direcao, $direcoesValidas)) {
     $erros[] = 'Direção inválida. Escolha crescente ou decrescente.';
 }
 
-// ── 2. Se houver erros, redireciona ─────────────────────
-if (!empty($erros)) {
-    // Em versão mock, exibe os erros inline
-    // Na Entrega 3 poderá usar session para redirecionar
-}
+// ── 2. Salvar no banco e gerar escada se não houver erros ────
+$novoId       = null;
+$data_hora    = null;
+$linhasEscada = [];
 
-// ── 3. Gerar a escada com loops aninhados ───────────────
-/**
- * Lógica dos loops:
- *   - Loop externo: percorre os níveis (linhas da escada)
- *   - Loop interno: repete a meta N vezes em cada linha
- *   - Direção crescente:   linha 1 = 1 rep, linha N = N reps
- *   - Direção decrescente: linha 1 = N reps, linha N = 1 rep
- */
-function gerarEscada(string $meta, int $niveis, string $direcao): array {
-    $linhas = [];
+if (empty($erros)) {
 
+    // INSERT na tabela exercicio12
+    $stmt = $pdo->prepare(
+        'INSERT INTO exercicio12 (meta, niveis, direcao) VALUES (:meta, :niveis, :direcao)'
+    );
+    $stmt->execute([
+        ':meta'    => $meta,
+        ':niveis'  => $niveis,
+        ':direcao' => $direcao,
+    ]);
+
+    $novoId    = (int) $pdo->lastInsertId();
+    $data_hora = date('Y-m-d H:i:s');
+
+    // Gerar escada com loops aninhados
+    // Loop externo: percorre os níveis (linhas)
+    // Loop interno: repete a meta N vezes em cada linha
     for ($i = 1; $i <= $niveis; $i++) {
-        // Quantas repetições nesta linha?
         $repeticoes = ($direcao === 'crescente') ? $i : ($niveis - $i + 1);
 
         $celulas = [];
         for ($j = 1; $j <= $repeticoes; $j++) {
             $celulas[] = $meta;
         }
-        $linhas[] = [
+
+        $linhasEscada[] = [
             'nivel'      => $i,
             'repeticoes' => $repeticoes,
             'celulas'    => $celulas,
         ];
     }
-
-    return $linhas;
 }
 
-$linhasEscada = [];
+// ── 3. Buscar histórico recente do banco (últimos 5) ─────────
+$historico = [];
 if (empty($erros)) {
-    $linhasEscada = gerarEscada($meta, $niveis, $direcao);
+    $stmtHist = $pdo->query(
+        'SELECT id, meta, niveis, direcao, data_hora
+         FROM exercicio12
+         ORDER BY data_hora DESC
+         LIMIT 5'
+    );
+    $historico = $stmtHist->fetchAll();
 }
-
-// ── 4. Dados MOCK do histórico recente ──────────────────
-// Na Entrega 3 isso virá do banco de dados via PDO
-$historicoMock = [
-    [
-        'id'        => 5,
-        'meta'      => 'VENCER',
-        'niveis'    => 5,
-        'direcao'   => 'crescente',
-        'data_hora' => '2025-06-10 14:32:00',
-    ],
-    [
-        'id'        => 4,
-        'meta'      => 'FOCO',
-        'niveis'    => 4,
-        'direcao'   => 'decrescente',
-        'data_hora' => '2025-06-10 11:18:45',
-    ],
-    [
-        'id'        => 3,
-        'meta'      => 'CRESCER',
-        'niveis'    => 7,
-        'direcao'   => 'crescente',
-        'data_hora' => '2025-06-09 20:05:12',
-    ],
-    [
-        'id'        => 2,
-        'meta'      => 'SONHAR',
-        'niveis'    => 3,
-        'direcao'   => 'crescente',
-        'data_hora' => '2025-06-09 09:44:30',
-    ],
-    [
-        'id'        => 1,
-        'meta'      => 'LUTAR',
-        'niveis'    => 6,
-        'direcao'   => 'decrescente',
-        'data_hora' => '2025-06-08 17:22:10',
-    ],
-];
-
-// Dados mock do registro atual (simula o INSERT retornando o novo id)
-$novoRegistroMock = empty($erros) ? [
-    'id'        => 6,
-    'meta'      => $meta,
-    'niveis'    => $niveis,
-    'direcao'   => $direcao,
-    'data_hora' => date('Y-m-d H:i:s'),
-] : null;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -182,8 +144,9 @@ $novoRegistroMock = empty($erros) ? [
             <?= $niveis ?> níveis ·
             <?= ucfirst($direcao) ?>
           </p>
-          <!-- Badge MOCK visível — será removido na Entrega 3 -->
-          <span class="badge-mock">⚙️ Modo Mock — sem banco de dados</span>
+          <span class="confirmacao-id">
+            Registro #<?= $novoId ?> salvo em <?= date('d/m/Y \à\s H:i', strtotime($data_hora)) ?>
+          </span>
         </div>
       </div>
     </section>
@@ -206,7 +169,7 @@ $novoRegistroMock = empty($erros) ? [
             >
               <td class="nivel-numero"><?= $linha['nivel'] ?></td>
               <td class="nivel-celulas">
-                <?php foreach ($linha['celulas'] as $idx => $palavra): ?>
+                <?php foreach ($linha['celulas'] as $palavra): ?>
                   <span class="palavra-chip"><?= htmlspecialchars($palavra) ?></span>
                 <?php endforeach; ?>
               </td>
@@ -223,12 +186,12 @@ $novoRegistroMock = empty($erros) ? [
       </div>
     </section>
 
-    <!-- ── Histórico Recente (MOCK) ── -->
+    <!-- ── Histórico Recente (BD) ── -->
     <section class="card historico-card" id="secao-historico">
       <div class="card-header">
         <div>
           <h2 class="card-title">Histórico Recente</h2>
-          <p class="card-desc">Últimas escadas geradas <span class="badge-mock">Mock</span></p>
+          <p class="card-desc">Últimas 5 escadas salvas no banco</p>
         </div>
         <a href="historico.php" class="btn-ver-mais">Ver tudo</a>
       </div>
@@ -245,26 +208,27 @@ $novoRegistroMock = empty($erros) ? [
             </tr>
           </thead>
           <tbody>
-            <!-- Registro recém-gerado (mock) em destaque -->
-            <?php if ($novoRegistroMock): ?>
-            <tr class="linha-nova" id="linha-novo-registro">
-              <td><?= $novoRegistroMock['id'] ?></td>
-              <td><strong><?= htmlspecialchars($novoRegistroMock['meta']) ?></strong></td>
-              <td><?= $novoRegistroMock['niveis'] ?></td>
-              <td><?= ucfirst($novoRegistroMock['direcao']) ?></td>
-              <td><?= date('d/m/Y H:i', strtotime($novoRegistroMock['data_hora'])) ?></td>
+            <?php if (empty($historico)): ?>
+            <tr class="linha-vazia">
+              <td colspan="5">Nenhum registro encontrado.</td>
             </tr>
+            <?php else: ?>
+              <?php foreach ($historico as $item): ?>
+              <tr <?= $item['id'] === $novoId ? 'class="linha-nova" id="linha-novo-registro"' : '' ?>>
+                <td><?= $item['id'] ?></td>
+                <td>
+                  <?php if ($item['id'] === $novoId): ?>
+                    <strong><?= htmlspecialchars($item['meta']) ?></strong>
+                  <?php else: ?>
+                    <?= htmlspecialchars($item['meta']) ?>
+                  <?php endif; ?>
+                </td>
+                <td><?= $item['niveis'] ?></td>
+                <td><?= ucfirst($item['direcao']) ?></td>
+                <td><?= date('d/m/Y H:i', strtotime($item['data_hora'])) ?></td>
+              </tr>
+              <?php endforeach; ?>
             <?php endif; ?>
-
-            <?php foreach ($historicoMock as $item): ?>
-            <tr>
-              <td><?= $item['id'] ?></td>
-              <td><?= htmlspecialchars($item['meta']) ?></td>
-              <td><?= $item['niveis'] ?></td>
-              <td><?= ucfirst($item['direcao']) ?></td>
-              <td><?= date('d/m/Y H:i', strtotime($item['data_hora'])) ?></td>
-            </tr>
-            <?php endforeach; ?>
           </tbody>
         </table>
       </div>
