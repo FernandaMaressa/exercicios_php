@@ -76,9 +76,10 @@ describe('Exercício 12 - Escada da Motivação (processar.php)', () => {
     cy.get('#secao-confirmacao').should('contain.text', 'Decrescente')
   })
 
-  it('card de confirmação exibe o badge de modo Mock', () => {
+  it('card de confirmação exibe o id e data do registro salvo no banco', () => {
     submeter('TESTE', '3')
-    cy.get('.badge-mock').should('be.visible')
+    cy.get('.confirmacao-id').should('be.visible')
+    cy.get('.confirmacao-id').invoke('text').should('match', /Registro #\d+/)
   })
 
   // ==========================================================
@@ -363,7 +364,7 @@ describe('Exercício 12 - Escada da Motivação (processar.php)', () => {
   })
 
   // ==========================================================
-  // HISTÓRICO MOCK
+  // HISTÓRICO NO PROCESSAR.PHP (BD REAL)
   // ==========================================================
 
   it('seção de histórico recente é visível após gerar', () => {
@@ -406,9 +407,9 @@ describe('Exercício 12 - Escada da Motivação (processar.php)', () => {
     cy.get('#linha-novo-registro').should('contain.text', 'LUTAR')
   })
 
-  it('histórico mock exibe pelo menos 5 registros no total', () => {
+  it('histórico exibe pelo menos 1 registro após salvar no banco', () => {
     submeter('FOCO', '3')
-    cy.get('#tabela-historico tbody tr').should('have.length.gte', 5)
+    cy.get('#tabela-historico tbody tr').should('have.length.gte', 1)
   })
 
   it('botão "Ver tudo" do histórico aponta para historico.php', () => {
@@ -458,5 +459,130 @@ describe('Exercício 12 - Escada da Motivação (processar.php)', () => {
     submeter('FOCO', '5')
     cy.scrollTo('bottom')
     cy.get('.header').should('be.visible')
+  })
+
+  // ==========================================================
+  // conexao.php — conexão com o banco de dados
+  // ==========================================================
+
+  it('conexao.php: processar.php não exibe erro de conexão com o banco', () => {
+    submeter('VENCER', '5')
+    cy.get('body').should('not.contain.text', 'Erro de conexão')
+  })
+
+  it('conexao.php: id do registro salvo é um número maior que zero', () => {
+    submeter('PERSISTIR', '4')
+    cy.get('#linha-novo-registro td').first()
+      .invoke('text')
+      .then(id => expect(Number(id.trim())).to.be.greaterThan(0))
+  })
+
+  // ==========================================================
+  // base.sql — estrutura da tabela exercicio12
+  // ==========================================================
+
+  it('base.sql: tabela aceita direção "crescente" sem erro', () => {
+    submeter('CRESCER', '5', 'crescente')
+    cy.get('#secao-confirmacao').should('be.visible')
+    cy.get('body').should('not.contain.text', 'Erro')
+  })
+
+  it('base.sql: tabela aceita direção "decrescente" sem erro', () => {
+    submeter('CAIR', '5', 'decrescente')
+    cy.get('#secao-confirmacao').should('be.visible')
+    cy.get('body').should('not.contain.text', 'Erro')
+  })
+
+  // ==========================================================
+  // historico.php — estrutura e navegação
+  // ==========================================================
+
+  it('historico.php: página carrega sem erro de conexão', () => {
+    cy.visit('/exercicio12/historico.php')
+    cy.get('body').should('be.visible')
+    cy.get('body').should('not.contain.text', 'Erro de conexão')
+  })
+
+  it('historico.php: link "Histórico" no nav está marcado como ativo', () => {
+    cy.visit('/exercicio12/historico.php')
+    cy.get('.header-nav .nav-link.active').should('contain.text', 'Histórico')
+  })
+
+  // ==========================================================
+  // historico.php — resumo geral
+  // ==========================================================
+
+  it('historico.php: seção de resumo é visível', () => {
+    cy.visit('/exercicio12/historico.php')
+    cy.get('#secao-resumo').should('be.visible')
+  })
+
+  it('historico.php: resumo exibe total de metas como número válido', () => {
+    cy.visit('/exercicio12/historico.php')
+    cy.get('#resumo-total .resumo-valor')
+      .invoke('text')
+      .then(txt => expect(Number(txt.trim())).to.be.gte(0))
+  })
+
+  // ==========================================================
+  // historico.php — filtros
+  // ==========================================================
+
+  it('historico.php: formulário de filtros existe e aponta para historico.php', () => {
+    cy.visit('/exercicio12/historico.php')
+    cy.get('#formFiltros')
+      .should('exist')
+      .and('have.attr', 'action')
+      .and('include', 'historico.php')
+  })
+
+  it('historico.php: filtro por meta retorna apenas registros que contenham o termo', () => {
+    submeter('VENCER', '5')
+    cy.visit('/exercicio12/historico.php?filtro_meta=VENCER')
+    cy.get('#tabela-historico-completo tbody tr').each($tr => {
+      cy.wrap($tr).should('contain.text', 'VENCER')
+    })
+  })
+
+  // ==========================================================
+  // historico.php — tabela completa
+  // ==========================================================
+
+  it('historico.php: tabela exibe todos os cabeçalhos corretos', () => {
+    cy.visit('/exercicio12/historico.php')
+    const headers = ['#', 'Meta', 'Níveis', 'Direção', 'Data / Hora', 'Ação']
+    cy.get('#tabela-historico-completo thead th').each(($th, i) => {
+      cy.wrap($th).should('contain.text', headers[i])
+    })
+  })
+
+  it('historico.php: cada linha exibe botão "Ver" para recriar a escada', () => {
+    submeter('RECRIAR', '4')
+    cy.visit('/exercicio12/historico.php')
+    cy.get('#tabela-historico-completo tbody tr').first()
+      .find('.btn-recriar')
+      .should('be.visible')
+      .and('contain.text', 'Ver')
+  })
+
+  // ==========================================================
+  // historico.php — recriação visual da escada
+  // ==========================================================
+
+  it('historico.php: clicar em "Ver" exibe a seção de escada recriada', () => {
+    submeter('RECRIAR', '4')
+    cy.visit('/exercicio12/historico.php')
+    cy.get('#tabela-historico-completo tbody tr').first()
+      .find('.btn-recriar').click()
+    cy.get('#secao-escada-recriada').should('be.visible')
+  })
+
+  it('historico.php: escada recriada exibe chips com a meta do registro clicado', () => {
+    submeter('RECRIAR', '4')
+    cy.visit('/exercicio12/historico.php')
+    cy.get('#tabela-historico-completo tbody tr').first()
+      .find('.btn-recriar').click()
+    cy.get('#secao-escada-recriada .palavra-chip').first()
+      .should('contain.text', 'RECRIAR')
   })
 })
