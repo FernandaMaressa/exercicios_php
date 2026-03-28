@@ -73,9 +73,15 @@
         <span class="num">12</span>
         <span class="title">Gerador de Escada de Motivação</span>
         <span class="arrow">→</span>
+    </a></li>
+        <li><a href="exercicio13/">
+        <span class="num">13</span>
+        <span class="title">Análise de Desempenho Escolar</span>
+        <span class="arrow">→</span>
+    </a></li>
     </ul>
 
-    <footer>© Fernanda Maressa Dev</footer>
+ <footer>© Fernanda Maressa Dev</footer>
 
 </body>
 </html>
