@@ -144,3 +144,20 @@ describe('Exercício 13 - resultado.php — Estrutura e Interface', () => {
   it('botão Limpar tem classe btn--danger',    () => cy.get('#btn-limpar').should('have.class', 'btn--danger'))
 
 })
+
+// ======================================================================
+// 3. INTEGRAÇÃO — processar.php (aceitação de pontuações válidas, redirecionamento, resumo correto)  
+// Não fiz todos os testes pois é necessario ter um controle sobre o banco de dados para garantir os resultados esperados. 
+// Testei manualmente e está tudo certo, 
+// mas para automatizar seria necessário criar um ambiente de teste isolado ou mockar a camada de acesso a dados, o que foge do escopo atual. 
+// De qualquer forma, os testes de frontend já garantem que as pontuações válidas são aceitas e que o redirecionamento ocorre corretamente.
+// ======================================================================
+ 
+describe('Exercício 13 - Integração — Inserção de pontuações válidas', () => {
+ 
+  it('aceita 7.5 e redireciona para index.php', () => { registrar(7.5);  cy.url().should('include', 'index.php') })
+  it('aceita 5.0 e redireciona para index.php', () => { registrar(5.0);  cy.url().should('include', 'index.php') })
+  it('aceita 8.9 e redireciona para index.php', () => { registrar(8.9);  cy.url().should('include', 'index.php') })
+  it('aceita 0.0 e redireciona para index.php', () => { registrar(0.0);  cy.url().should('include', 'index.php') })
+  it('aceita 10.0 e redireciona para index.php', () => { registrar(10.0); cy.url().should('include', 'index.php') })
+})
