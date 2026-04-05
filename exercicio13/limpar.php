@@ -1,6 +1,6 @@
 <?php
 /**
- * limpar.php — Remove todos os registros da tabela pontuações
+ * limpar.php — Remove todos os registros da tabela exercicio13 e reseta o AUTO_INCREMENT.
  */
 
 session_start();
@@ -8,8 +8,8 @@ session_start();
 require_once __DIR__ . '/conexao.php';
 
 try {
-    $pdo->exec('DELETE FROM pontuacoes');
-    $pdo->exec('ALTER TABLE pontuacoes AUTO_INCREMENT = 1');
+    $pdo->exec('DELETE FROM exercicio13');
+    $pdo->exec('ALTER TABLE exercicio13 AUTO_INCREMENT = 1');
 
     $_SESSION['mensagem']      = 'Todas as pontuações foram removidas com sucesso.';
     $_SESSION['tipo_mensagem'] = 'info';

@@ -161,3 +161,91 @@ describe('Exercício 13 - Integração — Inserção de pontuações válidas',
   it('aceita 0.0 e redireciona para index.php', () => { registrar(0.0);  cy.url().should('include', 'index.php') })
   it('aceita 10.0 e redireciona para index.php', () => { registrar(10.0); cy.url().should('include', 'index.php') })
 })
+
+// ======================================================================
+// 4. BANCO DE DADOS — inserção, classificação, contagem e limpeza
+// ======================================================================
+ 
+describe('Exercício 13 - Banco de Dados — Inserção e classificação', () => {
+ 
+  before(() => limpar())
+ 
+  it('inserir 7.5 → alert-success menciona BOM',       () => { registrar(7.5);  cy.get('.alert--success').should('contain.text', 'BOM') })
+  it('inserir 9.0 → alert-success menciona EXCELENTE', () => { registrar(9.0);  cy.get('.alert--success').should('contain.text', 'EXCELENTE') })
+  it('inserir 5.0 → alert-success menciona MÉDIO',     () => { registrar(5.0);  cy.get('.alert--success').should('contain.text', 'MÉDIO') })
+  it('inserir 2.0 → alert-success menciona BAIXO',     () => { registrar(2.0);  cy.get('.alert--success').should('contain.text', 'BAIXO') })
+ 
+  it('inserir valor inválido 11 → alert-error',        () => { registrar(11);   cy.get('.alert--error').should('be.visible') })
+  it('inserir valor inválido -2 → alert-error',        () => { registrar(-2);   cy.get('.alert--error').should('be.visible') })
+ 
+})
+ 
+describe('Exercício 13 - Banco de Dados — Contagem e resultado', () => {
+ 
+  before(() => {
+    limpar()
+    registrar(7.0)
+    registrar(8.4)
+    registrar(9.5)
+    registrar(3.0)
+  })
+ 
+  it('encerrar com -1 redireciona para resultado.php', () => {
+    encerrar()
+    cy.url().should('include', 'resultado.php')
+  })
+ 
+  it('stat-total exibe 4',       () => { encerrar(); cy.get('#stat-total').should('have.text', '4') })
+  it('stat-bons exibe 2',        () => { encerrar(); cy.get('#stat-bons').should('have.text', '2') })
+  it('percentual contém 50',     () => { encerrar(); cy.get('#stat-percent').should('contain.text', '50') })
+  it('tabela exibe 4 linhas',    () => { encerrar(); cy.get('#tabela-pontuacoes tbody tr').should('have.length', 4) })
+  it('2 pills BOM na tabela',    () => { encerrar(); cy.get('.status-pill--bom').should('have.length', 2) })
+  it('2 pills FORA DA FAIXA',    () => { encerrar(); cy.get('.status-pill--fora').should('have.length', 2) })
+ 
+})
+ 
+describe('Exercício 13 - Banco de Dados — Estatísticas', () => {
+ 
+  before(() => {
+    limpar()
+    registrar(3.0)
+    registrar(7.5)
+    registrar(10.0)
+  })
+ 
+  it('maior pontuação = 10.0', () => { encerrar(); cy.get('#stat-maior').should('contain.text', '10') })
+  it('menor pontuação = 3.0',  () => { encerrar(); cy.get('#stat-menor').should('contain.text', '3') })
+  it('média geral = 6.8',      () => { encerrar(); cy.get('#stat-media').should('contain.text', '6.8') })
+ 
+})
+ 
+describe('Exercício 13 - Banco de Dados — Ordenação', () => {
+ 
+  before(() => {
+    limpar()
+    registrar(2.0)
+    cy.wait(1100)
+    registrar(9.0)
+  })
+ 
+  it('primeira linha da tabela é o registro mais recente (9.0)', () => {
+    encerrar()
+    cy.get('#tabela-pontuacoes tbody tr').first().find('.td-score').should('contain.text', '9.0')
+  })
+ 
+})
+ 
+describe('Exercício 13 - Banco de Dados — Limpar registros', () => {
+ 
+  before(() => {
+    limpar()
+    registrar(8.0)
+  })
+ 
+  it('limpar.php redireciona para index.php',         () => { limpar(); cy.url().should('include', 'index.php') })
+  it('exibe alert--info após limpar',                 () => { limpar(); cy.get('.alert--info').should('be.visible') })
+  it('após limpar banco fica vazio (total = 0)',       () => { limpar(); encerrar(); cy.get('#stat-total').should('have.text', '0') })
+  it('após limpar exibe empty-state na tabela',       () => { limpar(); encerrar(); cy.get('#empty-state').should('be.visible') })
+ 
+})
+ 
