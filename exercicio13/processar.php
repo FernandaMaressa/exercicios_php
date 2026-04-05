@@ -1,11 +1,7 @@
 <?php
 /**
  * processar.php — Processamento central
- *
- * Fluxo:
- *   pontuacao == -1  → busca tudo, monta resumo na session, redireciona para resultado.php
- *   pontuacao válida → valida, classifica, insere no BD, volta para index.php
- *   inválida         → mensagem de erro, volta para index.php
+
  */
 
 session_start();
@@ -28,7 +24,7 @@ if ($pontuacao === null) {
 
 if ($pontuacao === -1.0) {
 
-    $stmt      = $pdo->query('SELECT id, pontuacao, nivel, data_cadastro FROM pontuacoes ORDER BY data_cadastro DESC');
+    $stmt      = $pdo->query('SELECT id, pontuacao, nivel, data_cadastro FROM exercicio13 ORDER BY data_cadastro DESC');
     $registros = $stmt->fetchAll();
     $total     = count($registros);
 
@@ -53,7 +49,7 @@ if ($pontuacao === -1.0) {
 try {
     $nivel = classificarNivel($pontuacao);
 
-    $stmt = $pdo->prepare('INSERT INTO pontuacoes (pontuacao, nivel) VALUES (:pontuacao, :nivel)');
+    $stmt = $pdo->prepare('INSERT INTO exercicio13 (pontuacao, nivel) VALUES (:pontuacao, :nivel)');
     $stmt->execute([':pontuacao' => $pontuacao, ':nivel' => $nivel]);
 
     $_SESSION['mensagem']      = "Pontuação {$pontuacao} registrada como {$nivel} com sucesso!";
