@@ -80,8 +80,8 @@ describe('Exercício 11 - Calculadora de Múltiplos', () => {
     cy.url().should('include', 'index.php');
   });
 
-  it('Campo número base aceita decimais (step any)', () => {
-    cy.get('input[name="numero_base"]').should('have.attr', 'step', 'any');
+  it('Campo número base não aceita decimais (step 1)', () => {
+    cy.get('input[name="numero_base"]').should('have.attr', 'step', '1');
   });
 
   it('Footer exibe o texto correto', () => {
@@ -261,12 +261,6 @@ describe('Exercício 11 - Calculadora de Múltiplos', () => {
     cy.get('input[name="numero_base"]').type('5');
     cy.get('#btn-calcular').click();
     cy.get('footer').should('contain', '© Fernanda Maressa Dev');
-  });
- 
-  it('Número decimal é aceito como base', () => {
-    cy.get('input[name="numero_base"]').type('2.5');
-    cy.get('#btn-calcular').click();
-    cy.get('#card-multiplos').should('be.visible');
   });
  
   // ═══════════════════════════════════════════════════════════
