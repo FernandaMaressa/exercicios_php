@@ -48,9 +48,12 @@ if ($acao === 'calcular') {
 
     // Validar número base
     if ($numero_base_raw === '' || !is_numeric($numero_base_raw)) {
-        $erro = 'Informe um número base válido (inteiro ou decimal).';
+        $erro = 'Informe um número base válido (inteiro).';
     } else {
         $numero_base = floatval($numero_base_raw);
+        if (floor($numero_base) !== $numero_base) {
+            $erro = 'O número base deve ser um valor inteiro.';
+        }
     }
 
     // Validar limite

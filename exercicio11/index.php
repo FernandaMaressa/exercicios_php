@@ -36,10 +36,10 @@
                     id="numero_base"
                     name="numero_base"
                     placeholder="Ex: 7"
-                    step="any"
+                    step="1"
                     required
                 >
-                <span class="field-hint">Pode ser inteiro ou decimal.</span>
+                <span class="field-hint">Digite apenas números inteiros. Ex: 7, 14, 21.</span>
             </div>
 
             <!-- Limite e ordenação lado a lado -->
