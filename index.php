@@ -79,6 +79,11 @@
         <span class="title">Análise de Desempenho Escolar</span>
         <span class="arrow">→</span>
     </a></li>
+        <li><a href="exercicio14/">
+        <span class="num">14</span>
+        <span class="title">Sistema de Avaliação de Desempenho de Vendas de produtos</span>
+        <span class="arrow">→</span>
+    </a></li>
     </ul>
 
  <footer>© Fernanda Maressa Dev</footer>
