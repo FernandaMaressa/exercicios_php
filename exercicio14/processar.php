@@ -81,7 +81,7 @@ $c2 = ($val >= 200.00);
 $c3 = ($sat >= 9.0);
 $topAtingidos = (int)$c1 + (int)$c2 + (int)$c3;
 
-$temZero = ($qtd === 0 || $val == 0 || $sat == 0);
+$temZero = ($qtd === 0 || $val == 0.0 || $sat == 0.0);
 
 if ($c1 && $c2 && $c3) {
     // Todos os 3 critérios top → Diamante
