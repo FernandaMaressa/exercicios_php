@@ -1,18 +1,59 @@
 <?php
 session_start();
 
-$resultado = $_SESSION['resultado'] ?? null;
-$erros     = $_SESSION['erros']     ?? [];
-$valores   = $_SESSION['valores']   ?? [];
+$resultado      = $_SESSION['resultado']      ?? null;
+$erros          = $_SESSION['erros']          ?? [];
+$valores        = $_SESSION['valores']        ?? [];
+$mensagem       = $_SESSION['mensagem']       ?? null;
+$mensagem_erro  = $_SESSION['mensagem_erro']  ?? null;
 
-unset($_SESSION['resultado'], $_SESSION['erros'], $_SESSION['valores']);
+unset(
+    $_SESSION['resultado'],
+    $_SESSION['erros'],
+    $_SESSION['valores'],
+    $_SESSION['mensagem'],
+    $_SESSION['mensagem_erro']
+);
 
+/* ── Busca histórico e estatísticas do banco ───────────────── */
+$historico   = [];
+$stats       = [];
+$total_geral = 0;
+
+require_once __DIR__ . '/conexao.php';
+
+try {
+    /* Histórico ordenado do mais recente ao mais antigo */
+    $stmt = $pdo->query('
+        SELECT id, quantidade, valor_medio, satisfacao, classificacao, data_registro
+        FROM exercicio14
+        ORDER BY data_registro DESC
+    ');
+    $historico = $stmt->fetchAll();
+
+    /* Contagem por classificação */
+    $stmt = $pdo->query('
+        SELECT classificacao, COUNT(*) as total
+        FROM exercicio14
+        GROUP BY classificacao
+    ');
+    foreach ($stmt->fetchAll() as $row) {
+        $stats[$row['classificacao']] = (int) $row['total'];
+    }
+
+    $total_geral = array_sum($stats);
+
+} catch (PDOException $e) {
+    $mensagem_erro = 'Erro ao carregar os dados do banco.';
+}
+
+/* ── Config visual dos tiers ───────────────────────────────── */
 $configTier = [
-  'Diamante'     => ['🟦', 'badge-diamante',    '#E6F1FB', '#0C447C', '#185FA5'],
-  'Ouro'         => ['🟨', 'badge-ouro',         '#FAEEDA', '#633806', '#BA7517'],
-  'Prata'        => ['🥈', 'badge-prata',        '#F1EFE8', '#444441', '#888780'],
-  'Bronze'       => ['🟫', 'badge-bronze',       '#FAECE7', '#712B13', '#993C1D'],
-  'Insuficiente' => ['🟥', 'badge-insuficiente', '#FCEBEB', '#791F1F', '#E24B4A'],
+    'Diamante'     => ['🟦', 'badge-diamante',    '#E6F1FB', '#0C447C', '#185FA5'],
+    'Ouro'         => ['🟨', 'badge-ouro',         '#FAEEDA', '#633806', '#BA7517'],
+    'Prata'        => ['⬜', 'badge-prata',        '#F1EFE8', '#444441', '#888780'],
+    'Bronze'       => ['🟫', 'badge-bronze',       '#FAECE7', '#712B13', '#993C1D'],
+    'Insuficiente' => ['🟥', 'badge-insuficiente', '#FCEBEB', '#791F1F', '#E24B4A'],
 ];
 ?>
 <!DOCTYPE html>
@@ -27,6 +68,25 @@ $configTier = [
 
   <div class="container">
 
+    <!-- ═══════════════════════════════════════════════════════
+         MENSAGENS DE FEEDBACK
+    ══════════════════════════════════════════════════════════ -->
+    <?php if ($mensagem): ?>
+      <div class="mensagem-sucesso" data-cy="mensagem-sucesso">
+        <?= htmlspecialchars($mensagem) ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($mensagem_erro): ?>
+      <div class="mensagem-erro" data-cy="mensagem-erro">
+        <?= htmlspecialchars($mensagem_erro) ?>
+      </div>
+    <?php endif; ?>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         FORMULÁRIO
+    ══════════════════════════════════════════════════════════ -->
     <section class="card animate-entrada" data-cy="formulario">
 
       <div class="section-header">
@@ -122,6 +182,9 @@ $configTier = [
     </section>
 
 
+    <!-- ═══════════════════════════════════════════════════════
+         RESULTADO
+    ══════════════════════════════════════════════════════════ -->
     <?php if ($resultado): ?>
     <?php
       $t = $configTier[$resultado['classificacao']] ?? $configTier['Insuficiente'];
@@ -133,7 +196,6 @@ $configTier = [
       data-cy="resultado"
     >
       <div class="resultado-topo">
-
         <div class="resultado-info">
           <div class="resultado-icone" style="background: <?= $bgTier ?>;">
             <?= $emoji ?>
@@ -146,11 +208,9 @@ $configTier = [
             </h3>
           </div>
         </div>
-
         <span class="badge-tier <?= $badgeClass ?>">
           <?= $emoji ?> <?= htmlspecialchars($resultado['classificacao']) ?>
         </span>
-
       </div>
 
       <div class="resultado-resumo">
@@ -183,10 +243,13 @@ $configTier = [
           </div>
         <?php endforeach; ?>
       </div>
-
     </section>
     <?php endif; ?>
 
+
+    <!-- ═══════════════════════════════════════════════════════
+         ESTATÍSTICAS
+    ══════════════════════════════════════════════════════════ -->
     <section data-cy="estatisticas">
 
       <div class="block-title">
@@ -197,31 +260,40 @@ $configTier = [
       <div class="stats-grid" data-cy="cards-stats">
         <?php
         $statsConfig = [
-          ['Diamante',     '🟦', 'stat-diamante',     'diamante'],
-          ['Ouro',         '🟨', 'stat-ouro',          'ouro'],
-          ['Prata',        '⬜', 'stat-prata',         'prata'],
-          ['Bronze',       '🟫', 'stat-bronze',        'bronze'],
-          ['Insuficiente', '🟥', 'stat-insuficiente',  'insuficiente'],
+          ['Diamante',     '🟦', 'stat-diamante',    'diamante'],
+          ['Ouro',         '🟨', 'stat-ouro',         'ouro'],
+          ['Prata',        '⬜', 'stat-prata',        'prata'],
+          ['Bronze',       '🟫', 'stat-bronze',       'bronze'],
+          ['Insuficiente', '🟥', 'stat-insuficiente', 'insuficiente'],
         ];
-        foreach ($statsConfig as [$nome, $emoji, $cls, $slug]): ?>
+        foreach ($statsConfig as [$nome, $emoji, $cls, $slug]):
+          $count = $stats[$nome] ?? 0;
+          $pct   = $total_geral > 0 ? round(($count / $total_geral) * 100) : 0;
+        ?>
           <div class="stat-card <?= $cls ?>" data-cy="stat-<?= $slug ?>">
             <div class="stat-emoji"><?= $emoji ?></div>
-            <div class="stat-count" data-cy="stat-count-<?= $slug ?>">—</div>
+            <div class="stat-count" data-cy="stat-count-<?= $slug ?>"><?= $count ?></div>
             <div class="stat-nome"><?= $nome ?></div>
-            <div class="stat-pct" data-cy="stat-pct-<?= $slug ?>">—</div>
-            <div class="stat-bar" data-cy="stat-bar-<?= $slug ?>" style="width: 0%;"></div>
+            <div class="stat-pct" data-cy="stat-pct-<?= $slug ?>"><?= $pct ?>%</div>
+            <div class="stat-bar" data-cy="stat-bar-<?= $slug ?>"
+                 style="width: <?= $pct ?>%;"></div>
           </div>
         <?php endforeach; ?>
       </div>
 
-      <p style="font-size: 0.875rem; color: #B4B2A9; text-align: center; margin-top: 0.75rem;"
-         data-cy="stats-aviso">
-        As estatísticas serão carregadas após a conexão com o banco de dados.
-      </p>
+      <?php if ($total_geral > 0): ?>
+        <p style="font-size: 0.875rem; color: #B4B2A9; text-align: center; margin-top: 0.75rem;"
+           data-cy="stats-total">
+          <?= $total_geral ?> avaliação<?= $total_geral > 1 ? 'ões' : '' ?> registrada<?= $total_geral > 1 ? 's' : '' ?> no total.
+        </p>
+      <?php endif; ?>
 
     </section>
 
 
+    <!-- ═══════════════════════════════════════════════════════
+         HISTÓRICO
+    ══════════════════════════════════════════════════════════ -->
     <section data-cy="historico">
 
       <div class="historico-header-row">
@@ -248,27 +320,51 @@ $configTier = [
           <span class="tabela-th">Data</span>
         </div>
 
-        <div class="tabela-vazio" data-cy="historico-vazio">
-          <div class="tabela-vazio-icon">📊</div>
-          <p>Nenhuma avaliação cadastrada ainda</p>
-          <span>As avaliações aparecerão aqui após a conexão com o banco</span>
-        </div>
+        <?php if (empty($historico)): ?>
+          <div class="tabela-vazio" data-cy="historico-vazio">
+            <div class="tabela-vazio-icon">📊</div>
+            <p>Nenhuma avaliação cadastrada ainda</p>
+            <span>Preencha o formulário acima para começar</span>
+          </div>
+        <?php else: ?>
+          <?php foreach ($historico as $reg):
+            $tc = $configTier[$reg['classificacao']] ?? $configTier['Insuficiente'];
+            [$tEmoji, $tBadge] = $tc;
+          ?>
+            <div class="tabela-row" data-cy="tabela-row">
+              <span class="tabela-td tabela-td-id">#<?= $reg['id'] ?></span>
+              <span class="tabela-td"><?= $reg['quantidade'] ?> un</span>
+              <span class="tabela-td">R$ <?= number_format($reg['valor_medio'], 2, ',', '.') ?></span>
+              <span class="tabela-td"><?= number_format($reg['satisfacao'], 1, ',', '.') ?></span>
+              <span class="tabela-td">
+                <span class="badge-tier <?= $tBadge ?>" data-cy="tabela-classificacao">
+                  <?= $tEmoji ?> <?= htmlspecialchars($reg['classificacao']) ?>
+                </span>
+              </span>
+              <span class="tabela-td tabela-td-data">
+                <?= date('d/m/Y H:i', strtotime($reg['data_registro'])) ?>
+              </span>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
 
         <div class="tabela-footer">
-          <span class="tabela-total" data-cy="tabela-total">0 registros</span>
+          <span class="tabela-total" data-cy="tabela-total">
+            <?= $total_geral ?> registro<?= $total_geral !== 1 ? 's' : '' ?>
+          </span>
         </div>
 
       </div>
     </section>
 
 
+    <!-- ── Footer ─────────────────────────────────────────── -->
     <footer class="footer">
-        <p>© Fernanda Maressa Dev</p>
+      <p>© Fernanda Maressa Dev</p>
     </footer>
 
   </div>
 
   <script src="js/main.js"></script>
-
 </body>
 </html>
