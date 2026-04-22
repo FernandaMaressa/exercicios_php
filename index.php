@@ -84,6 +84,11 @@
         <span class="title">Sistema de Avaliação de Desempenho de Vendas de produtos</span>
         <span class="arrow">→</span>
     </a></li>
+        <li><a href="exercicio15/">
+        <span class="num">15</span>
+        <span class="title">Simulador de Investimento</span>
+        <span class="arrow">→</span>
+    </a></li>
     </ul>
 
  <footer>© Fernanda Maressa Dev</footer>
